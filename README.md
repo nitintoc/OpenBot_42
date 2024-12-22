@@ -1,5 +1,5 @@
 # documentation_rag
-Interact with a text file using an ai agent with this project
+Interact with knowledge base using an ai agent with this project
 
 Why I created this project?
 One can upload any text file and interact with it using llm locally on one's system. 

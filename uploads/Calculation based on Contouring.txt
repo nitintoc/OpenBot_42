@@ -1,0 +1,1474 @@
+Calculation based on Contouring
+The ambition of energy efficient mobility drives the usage of composite materials. Many of these parts can be characterized as thin walled hulls.
+After the casting process these parts require an edge trimming operation to get their final shape.
+Contouring is a highly automated algorithm to create the edge trimming toolpath. The Contouring calculation strategy is designed for the edge trimming of thin materials. The position of the tool relative to the geometry can be defined by various options: from only a 3-axis output to a more complex 5-axis output with different tool axis orientation options. A key feature of this algorithm is the axial shift where the tool can be engaged with a certain value into the material. The contour can be automated, or user defined.
+•	The Feed rate defines the speed on the toolpath contour.
+•	The Plunge rate defines the speed of the tool as it plunges by the feed distance in the tool axis direction onto the contour during a link move.
+•	The Retract rate defines the speed of the tool as it retracts in the tool axis direction from the contour during a link move.
+Rapid retract: This option lets you use the rapid feed rate as the retract rate.
+The working coordinate system lets you specify all input points and directions/axis definitions in a local coordinate system. The following information defines the transformation between the local and global coordinate system.
+To define the Working Coordinate System as a right-handed coordinate system (with positive rotation counterclockwise):
+•	Origin
+This parameter defines the origin of the Working Coordinate System. (X,Y,Z) are defined relative to the global coordinate system.
+•	i
+This parameter is the unit vector for the X-Axis of the Working Coordinate System. (X,Y,Z) are defined relative to the origin of the global coordinate system.
+•	j
+This parameter is the unit vector for the Y-Axis of the Working Coordinate System. (X,Y,Z) are defined relative to the origin of the global coordinate system.
+•	k
+This parameter is the unit vector for the Z-Axis of the Working Coordinate System. (X,Y,Z) are defined relative to the origin of the global coordinate system.
+
+
+
+Speed
+This parameter sets the spindle speed in rpm.
+Direction
+Designates the spindle rotation direction:
+•	Clockwise
+•	Counterclockwise
+Inside corners - Relief groove : With this option the tool cuts the corners with a groove of a certain length.
+Outer corner – Loop : With this option the tool performs a loop with a given radius on the outer corner edge.
+Outer corner - Roll around. With this option the tool performs a rounded cut on the outer corner.
+Gouge check
+Check surfaces - This option enables additional surfaces to be used to avoid collisions. These can be other surfaces, such as fixtures, measuring devices etc.
+Check surfaces clearance - This option defines the clearance distance to be kept to the aditional surfaces.
+Shaft Clearance - This option expands the shaft to create a clearance from the shaft. Only the diameter is expanded.
+Arbor Clearance - This option expands the arbor to create a clearance from the arbor. The clearance is applied to the diameter and the height.
+Holder Clearance - This option expands the holder to create a clearance from the holder. The clearance is applied to the diameter and the height.
+Entry / Exit
+Description
+The First entry defines the link type and the distance from where the tool approaches the machining surfaces for the first time.
+The following types can be applied:
+•	Approach from clearance area (default).
+•	Approach from rapid distance.
+•	Approach from feed distance.
+•	Direct - the tool is positioned instantly at the toolpath start point without any approaches.
+The Last exit defines the link type and distance to retract to after the machining has been completed.
+The following types can be applied:
+•	Retract to clearance area (default).
+•	Retract to rapid distance.
+•	Retract to feed distance.
+•	Retract to clearance area through tube center.
+•	Direct - the tool stops at the toolpath finish point without any retractions.
+Retract to clearance area through tube center
+Allows to retract the tool through the tube center out of the part. Tool axis orientation is equal to the orientation from the last position on drive face which supposed to be collisions free.  It should provide collisions free retraction move.
+Applied for port or similar geometries machining only for the Last exit retract.
+Start from home position / Return to home position
+Allows the user to start and finish the machining process at a certain position and orientation.
+The position can be specified as X,Y,Z coordinates or picked as a geometry via the Retracts dialog.
+Gaps Along Cut
+Description
+This defines the connection type when gaps along the cut are detected.
+Gaps along the cut could be caused by the features of machining surface shape and the selected toolpath type.
+The following link types can be applied:
+•	Direct
+•	Follow surfaces
+•	Blend spline
+•	Step (Only available for 3-Axis output)
+•	Retract to feed distance
+•	Retract to rapid distance
+•	Retract to clearance area
+•	Follow stock
+Note: The selected link type cannot be applied if it does not satisfy the safety conditions. In this case, the next safe link type will be used.
+Direct: Shortest straight line connection between the gap edges without any retracting movements. The feedrate value is applied for this type.
+Follow surfaces :The connection follows the existing geometry on the gap edges without any retracting movements. The feed rate value is applied. This only works when the gouge checking strategy is selected.
+Blend spline :Tangential arcs connection between the gap edges. The feedrate value is applied.
+Retract to rapid distance
+Straight line connection between the gap edges with tool retraction to the specified rapid distance.It contains the following segments:
+•	Retraction along tool axis to rapid distance
+•	Connection and approach along tool axis
+•	Each segment has its own feedrate.
+Retract to clearance area: Straight line connection between the gap edges with retracting tool to the specified clearance area. It contains the follow segments:
+Retraction along tool axis to clearance area : Connection and approach along tool axis
+Each segment has its own feed rate.
+Clearance blend spline : The clearance blend spline creates a collision free spline between the end points. This blend spline is tangent to the end points and guided towards the direction of the selected clearance area. This Link type is allowed to exceed the clearance areas.
+Follow stock: Only available for stock supported patterns.
+The existing stock geometry is used to create the connection. The feed rate value is applied. This option only works when the gouge checking strategy is selected and applies only to the specified stock geometry.
+Gap size differentiation
+The length of the toolpath gap can be determined as Small or Large. Different link types can be specified for each of these distances. The threshold value for the gap size can be defined as a percentage of the tool diameter or by an absolute value.
+
+In cases where the gap length is less than the threshold, the link type specified for small gaps will be applied. Once the gap length becomes greater than the threshold, the link type specified for large gaps will be used. 
+On the example shown here, a Direct link type is applied for the Small gaps (3) and Retract to feed distance is applied for the Large gaps (2).
+Step
+The step link type can contain retraction, connection and vertical approach segments. The connection is located on the tool plane between the gap edges. The animation shows the step link. Each segment has its own feed rate.
+
+Note: This option is only available when the output format is set to 3-Axis.
+Lead In-Out
+Description
+The leads are parametric entry and exit movements to and from the machining surfaces. The leads can be set for all link motion types (first entry, last exit, gaps along cut, links between slice and links between passes). By default, all link types use Default Lead-In/Out which can be set by clicking the Default Lead-In/Out button on the Link tab. Once a lead has been activated for a certain link type, three dots '...' appear next to the lead drop down menu. You can use this dialog to define an individual lead independently of the default lead settings. Two basic leads are available: arc and line. Approach directions can be selected from different lead types.
+
+The selected lead type cannot be applied if it does not satisfy the safety conditions. In other words, if a collision strategy (other than Report collision) is applied and the selected lead is in collision, the algorithm will try to modify the selected lead's dimensions and/or type in order to obtain a collision-free solution. If no collision-free solution can be found for the lead, it will not be created. 
+
+
+
+Lead type arc
+The arc parametric move (apart from automatic arc) can be defined via:
+
+The arc diameter and arc sweep angle.
+The arc width and arc length. The width and length define the bounding rectangle that encloses the arc. The created arc always has a 90° sweep.
+
+
+Tangential arc
+Connects with the toolpath start point tangential to the contour.
+
+The orientation is the tool plane.
+
+Tool side tilting influences the lead orientation.
+
+
+
+Reverse tangential arc
+Connects with the toolpath start point tangential to the contour.
+
+The orientation is the tool plane and is opposite to the cutting direction.
+
+Tool side tilting influences the lead orientation.
+
+
+
+Orthogonal arc
+Connects with the toolpath start point orthogonal to the contour.
+
+The orientation is the tool plane.
+
+Tool side tilting influences the lead orientation.
+
+
+
+Vertical tangential arc
+Connects with the toolpath start point tangential to the contour.
+
+The orientation is orthogonal to the tool plane.
+
+Tool side tilting influences the lead orientation.
+
+
+
+Reverse vertical tangential arc
+Connects with the toolpath start point tangential to the contour.
+
+The orientation is orthogonal to the tool plane and opposite to the cutting direction.
+
+Tool side tilting influences the lead orientation.
+
+
+
+Horizontal tangential arc
+Connects with the toolpath start point tangential to the contour.
+
+The orientation is on the machining plane.
+
+
+
+Position line
+This option can be found in the Lead in/out menu. This option allows you to start and end the machining process at a certain position and orientation. This is achieved by picking a line that is used as the geometry.
+
+The animation shows a machining process where the lead in and lead out process uses the position line as the initial start point and orientation. The point and vector interpolation between the line and the start point on the contour is linear.
+
+Available only for 5-axis patterns.
+
+
+
+Automatic start height
+When you use the automatic height algorithm, the height along the line is not absolute, but is automatically adjusted to the cut position. The tool axis and position are still on the same line, but the height is at the level of the cut.
+
+
+
+Auto arc sweep
+The arc is automatically extended or trimmed until it is tangent to the tool axis.
+
+
+
+Lead type line
+Linear parametric move with the desired length.
+
+
+
+Tangential line
+Connects with the toolpath start point tangential to the contour.
+
+The orientation is parallel to the cutting layer.
+
+
+
+Reverse tangential line
+Connects with the toolpath start point tangential to the contour.
+
+The orientation is parallel to the cutting layer and opposite to the cutting direction.
+
+
+
+Orthogonal line
+The orthogonal line is a straight line that connects with the toolpath start point orthogonal to both the contour movement direction and the tool axis. 
+This direction ensures the tool does not move towards the surface normal of the toolpath start point.
+If the surface normal and the lead direction are also orthogonal to each other, the correction is applied relative to the orthogonal vector of the toolpath start point. 
+
+
+
+Fillet
+The Fillet option inserts an arc with a given radius between the contour and the orthogonal line. If the selected fillet is bigger than the line length, only an arc is created. 
+
+
+
+Reverse orthogonal line
+The reverse orthogonal line is identical to the orthogonal line lead, except its direction is flipped.
+
+
+
+Fillet
+The Fillet option inserts an arc with a given radius between the contour and the orthogonal line. If the selected fillet is bigger than the line length, only an arc is created. 
+
+
+
+Vertical profile ramp
+This lead follows the toolpath contour shape until it reaches the specified length and height.
+
+In the machining plane, it is attached tangentially to the closed contours and in the opposite direction to the open contours.
+
+
+
+Reverse vertical profile ramp
+This lead follows the toolpath contour shape until it reaches the specified length and height.
+
+In the machining plane, it is attached opposite to the cutting direction.
+
+
+
+Along tool axis
+The Along tool axis lead connects the toolpath with a direct move along the tool axis direction.
+
+
+
+Tool axis orientation
+This parameter defines the orientation of the tool axis along the lead-in and lead-out directions.
+
+
+
+Fixed
+This means that the tool axis orientation does not change during the lead-in motion.
+
+
+
+Tangential
+The tool axis orientation changes for the lead move to ensure the rotations on the machine tool axis are continuous during lead-in and when entering the part. This avoids marks on the part that can occur due to sudden rotations of the machine tool axis when the tool starts to cut the part.
+
+
+
+Maximum lead angle change
+For large tangential lead moves, the total change in the tool axis orientation can be very big. For this reason, it is good practice to limit the total change in the tool axis orientation along a lead move with the maximum angle change parameter.
+
+
+
+Tilted
+This option maintains the main tilt strategy used on the tool axis control page. For example, if main tilting is set to Tilted through point, the lead in/out will use this point for tilting.
+
+
+
+User Defined
+This option interpolates linearly between the first and last point of the contour in the direction given by the user.
+
+If the end direction is anti-parallel with the start orientation, an exception message is shown.
+
+ 
+
+
+
+Normal to lead
+This orientation keeps the tool normal to the toolpath at all positions. It is available only for vertical arcs.
+
+
+
+Orthogonal to cut direction
+When the selected type is Tangential line, the orthogonal to cut direction option can be used for the tool axis orientation. This option keeps the tool axis orientation perpendicular to the tangential line.
+
+This option should only be used for 4-axis machining.
+
+
+
+Additional parameters
+This parameter defines the incremental height of the lead move. For lines, the height value helps to build a ramp. For arc moves, the height value creates a spiral.
+
+In the example shown here, an orthogonal line is used. The tool side tilt angle is 0°, so the line should be at the same level as the cut slice. But with a height of 20 mm, the start point of the lead is 20 mm above the actual start point.
+
+
+
+Flip
+This option allows the lead to flip to the opposite side.
+
+
+
+Feed rate
+This option allows a percentage of the feed rate to be applied to the current lead move.
+
+
+
+Leads extensions
+Lead-in/out extensions are extra segments that make the approach and retraction movements smoother and more gradual.
+
+The following extension types are supported:
+
+Tangential line
+Vertical tangential arc
+Horizontal tangential arc  
+These segments are available for the finishing strategies.
+
+The animation shows a toolpath where only lead-in/out segments are applied.
+
+
+
+The animation shows a toolpath where the vertical tangential arc extensions are applied with the lead-in/out segments.
+
+
+
+The animation shows a toolpath where the horizontal tangential arc extensions are applied with the lead-in/out segments.
+
+
+
+The animation shows a toolpath where the tangential line extensions are applied with the lead-in/out segments.
+
+
+
+Users can control the size of the extensions.
+
+Arcs can be defined by Width/Length or Arc sweep angle/Arc diameter and flipped from the original orientation. The linear extension is defined by the Length parameter.
+
+
+
+Automatic arc
+The lead in/out connects the contour tangentially to the retraction direction of the relinking. It should always be possible to apply the link, even in combination with collision checking.
+
+The automatic arc consists of two splines. The first spline leaves the surface tangential to the surface normal direction (similar to a tangential arc). The second spline connects tangentially to the plunge or retract motion, using the tool axis tilting orientation.
+
+
+
+Align towards previous/next cut
+With this option, the user can influence the second spline that consists of the automatic arc and direct the automatic arc geometry towards the next input or previous output. This provides the shortest link when the tool direction is different from the surface normal.
+
+This new option only affects the Blend spline when using automatic arcs. It creates a much smaller retraction between contours to improve the construction of links.
+
+
+
+Notes:
+
+The second spline aligns the lead towards the tool axis to ensure a smooth transition both away from the surface and towards the retract/approach direction of the link.
+The second spline can also be aligned towards the other contour that is being linked, instead of the tool axis.
+Whatever the direction of alignment of the second spline, it will not be created if the resulting alignment direction is the same as the surface normal.
+If the second spline is aligned towards the next cut, it will not be created if there is no room for it. This avoids a fishtail effect with sharp tool direction changes.
+If min radius>0, the leads should always be created between a contour and a retract/approach link. If the leads cannot be built collision-free, the contour will be trimmed.
+Each of the spline elements of the automatic arc moves 1 full radius in the first tangent direction, but only 2/3 radius in the second tangent direction.
+Collision avoidance mechanisms:
+
+Reduce the radius of the splines by 1/3 of the difference between the desired radius and the minimum radius.
+If it is not possible to reduce the radius and if the tool axis orientation is Automatic and Autotilt is active as a collision avoidance strategy for the toolpath calculation, then Autotilt is used to try to escape the gouges. If an Autotilt job is not active, but the tool axis orientation is still set to Automatic, the behavior will be the same as selecting Fixed for the tool axis orientation.
+When the contour has been trimmed, the working radius is restored to the desired user value and the process begins again.
+
+
+
+Automatic
+This option applies automatic tilting on the automatic arc when the tool is a Sphere mill and the tool axis orientation is Automatic.
+
+During the process that creates the lead-in/out move, possible collisions are avoided by automatic tilting.
+
+The selection of checked tool parts, clearances and check surfaces is taken from the gouge check job. The job's strategy is automatically set to TILT AWAY and the maximum tilt angle is set to 90 degrees. It modifies only the lead moves to provide a more complete toolpath.
+
+
+
+
+Fade
+This option adds a new lead type called "Fade" that moves slowly away from and towards the machining surfaces. The result is a very small ramp that enables rest finishing strategies to easily engage the material without leaving stepover marks on the workpiece.
+The main benefit is improved surface quality after tool changes, orientation changes and machine downtimes.
+Length parameter is describing the length of fade lead type, either by value or by % of tool diameter.
+Height parameter describes the height of fade lead type, either by value or by % of tool diameter.
+Contour trim parameter is describing how much of the contour will be trimmed, either by value or by % of tool diameter.
+Links Between Passes
+This option defines the type of connection between adjacent passes.
+The following link types can be applied:
+•	Direct
+•	Follow surfaces
+•	Blend spline
+•	Step (only available for 3-axis output)
+•	Retract to feed distance
+•	Retract to rapid distance
+•	Retract to clearance area
+•	Follow stock
+If the selected link type does not satisfy the safety conditions, it is not applied. In this case, the next safe link type is used.
+Distance between passes differentiation
+The distance between passes can be Small or Large. Different link types can be specified for each of these distances. The threshold value for the distance between passes can be defined as an absolute value.
+
+When the distance is less than the threshold, the link type for Small moves is applied. The link type for Large moves is applied when the distance between passes is greater than the threshold.
+
+In the example shown here, the Direct link is applied for Small moves (1) and the Retract to feed distance for Large moves (2).
+Link between slices defines the type of connection between adjacent cuts or cutting layers.
+The following link types can be applied:
+•	Direct
+•	Follow surfaces
+•	Blend spline
+•	Step (Only available for 3-Axis output)
+•	Retract to feed distance
+•	Retract to rapid distance
+•	Retract to clearance area
+•	Follow stock
+Arc Fit
+Arc fit
+This feature provides tangential arcs for the approaching and retracting link segments. Users can specify the radius of the arc.
+This feature can only be applied to the following link types:
+•	Retract to feed distance
+•	Retract to rapid distance
+•	Retract to clearance area
+The animation shows the default shape of the link between regions retracted to the feed distance.
+Feed distance arc fit
+The animation shows the shape of the link between regions retracted to the feed distance with the Arc fit option applied.
+Arc radius
+Set the arc radius for the specified link.
+Clearance area
+When the Arc Fit > Clearance area option is selected, the link is extended to a linear move until it intersects the clearance area. If this option is unselected, the link is extended along the shortest distance to the clearance area.The animation shows how the operation is performed when the option is unselected.
+Clearance Area
+Clearance area
+This is the retraction area where tool movements should not cause collisions with the part surface.
+
+The shape and location of the clearance area can be specified as:
+
+Plane
+Cylinder
+Sphere
+Notes:
+
+Rapid feed rate is applied for clearance area moves.
+The default for Clearance area is Automatic. This setting will search automatically for a fitting clearance solution.
+
+
+Plane
+The planar area is raised above the workpiece at the specified height and in the desired direction. The direction is determined by the direction of the plane normal vector.
+
+The direction can be:
+
+Parallel to the X, Y or Z axis. 
+Defined by the user as XYZ or an imported line. 
+Similar to the machining direction - for 3-axis toolpaths only.
+Cylinder
+The cylindrical area around the workpiece is specified by the radius and desired direction. This may be useful for 4-axis and 5-axis machining as well as turn milling. The cylinder rotation axis direction determines the clearance area orientation and can be:
+
+Parallel to the X, Y or Z axis. 
+Defined by user as XYZ or an imported line. 
+The Through option allows the user to shift the cylinder in a specified direction.
+Sphere
+The spherical area around the workpiece with a specified radius and desired orientation.
+The orientation can be defined as XYZ coordinates or by an imported point.
+Surfaces
+This option allows the selection of user-defined surfaces as clearance areas. With this type of clearance, toolpaths can be limited to shorter retracts, reducing the overall cycle time.
+
+The input geometry can be either a mesh or nurbs. If the input geometry is nurbs, it will be converted to a mesh.
+
+
+
+
+
+Automatic clearance area
+With this feature, the system automatically determines the clearance area type, position and dimension. Each parameter is calculated based on the user given surfaces, the toolpath and other linking parameters, using heuristics that are designed to produce a stable result for all patterns.
+Note: The calculation of the automatic clearance area does not take into account the lead in and lead out.
+Additional parameters
+The threshold for a maximum segment length of the cylinder or sphere, which is defined by an angle.
+The image shows the machining of a turbine blade. Only the sides of the blade should be machined, so the small radius surfaces are left out. The tool retracts to the clearance area cylinder. The cylinder is parallel to the x-axis.
+The turbine blade center is not exactly on the x-axis. To move the cylinder, an offset to the x-axis must be added, so that the axis of the cylinder moves to the center of the turbine blade. After setting the offset through the x-axis, the cylinder moves down.
+Here you can see four drive surfaces being machined parallel to each other. With gaps along cuts, the tool retracts to the clearance area. The large number of retractions show you the sphere shape.
+Tool Orientation on Clearance
+This option allows the user to select the tool axis orientation to be aligned or opposed to the clearance area face normal.
+This ensures a collision-free linking toolpath without any unexpected, drastic orientation changes. The benefit is a much safer toolpath with expected behaviour and correctly oriented tools. 
+There is also an automatic option that automatically chooses the correct tool orientation depending on which side the toolpath is located.
+Incremental clearance plane
+The incremental clearance area can be set to 2 traversing types between 2 cuts: direct and step.
+Direct: The tool retracts to the incremental clearance area value. The connection is a direct line to the next position. The line can be diagonal and connect the 2 cuts with the shortest way.
+Step: The retraction distance is at least equal to the incremental clearance value. The connection is a horizontal line to the next cut. Since the line is horizontal, the incremental clearance area value of the lower point will be extended until the upper incremental clearance area distance is reached.
+The height for incremental clearance plane starts from the cuts and is composed of incremental height, rapid distance, feed distance and air move safety distance.
+Distances
+Rapid distance
+The retract is performed based on the move direction. If there is an angle, the plane is rotated along the axis determined by the vector product.
+The feed rate between the Rapid and Feed distances is rapid.
+Entry feed distance
+The tool approaches the surface from a distance with the plunge feed rate defined by the user.
+The value for Entry feed distance can be set independently or combined with the Exit Feed distance.
+Exit feed distance
+The tool retracts from the surface to a distance with the plunge feed rate defined by the user.
+The value for the Exit feed distance can be set independently or combined with the Entry Feed distance.
+Air move safety distance
+Minimum safe distance, applied under the tool (down the tool axis), between the tool air movements and the drive or check surfaces.
+Exclude curves: Use this option to exclude particular edges from the toolpath.
+Extensions
+Start/End
+The user can add extensions to contour segments. Open segments will be extended tangentially if they will result in a toolpath free of collision. Closed segments will be extended along themselves in a loop. The extension length can be specified for the start and end of segments separately.
+Geometry selection
+Top Surface
+Select the top surface for the Contouring operation. The top surface fulfills two purposes:
+1. Feature recognition: the drive curves can be derived automatically based on the top surface.
+2. Collision avoidance: the top surface is protected against collisions with the holder and/or arbor geometry.
+It is mandatory to select the top surface. To add additional surfaces for collision checking, use the 'check surfaces' option; or to add the contouring surface, use the Parallel to contouring surface option from Tool axis control page.
+Drive curve definition
+There are 2 options available:
+User defined: the user must add the curves manually in IGES format.
+Automatic boundary detection: all edges are automatically extracted from the selected part surfaces.
+There are three automatic curve definitions:
+Outer curves and holes: all the curves are extracted from the surface
+Outer curves: only the exterior curves are extracted
+Holes: only the curves inside a closed contour are extracted
+Curve offset
+The toolpath is offset from the detected/selected curves with a given value. This option is used for the extra material that must remain for further processes.
+The default value is zero and is measured in millimeters or inches respectively.
+Machining
+Climb/Conventional
+There are two machining directions that depend on the rotation direction of the machine spindle:
+Climb: the tool movement has the same direction with the spindle rotation
+Conventional: the tool movement is opposite to the spindle rotation movement
+Start point
+Start point
+The start point defines the beginning of the first cut and the following cuts onto the drive surface select start point detection mode. The user can choose between:
+• Automatic: toolpath will start at beginning of open segments and on closest point to last position on closed segments
+• User defined: define start point manually
+
+
+
+Automatic
+On the automatic option the start point begins at the middle of the longest segment if the curves are closed.
+User defined start point
+The position of the start point can be defined with the coordinates X, Y and Z.
+
+Surface quality
+Max distance
+The user can define the maximal distance between the two tool positions.
+Cut tolerance
+The user can specify a cutting tolerance value. The default values are 0.01 mm or 0.0005 inches respectively. This option affects the cutting accuracy.
+Machining type
+3-axis
+This option is used for 3-axis machining. When you use this option, the toolpath has certain limitations due to limitations in the tool movement.
+4+1 axis
+With this option, the toolpath has a 4-axis output with an additional fixed tilted direction.
+It is possible to set an additional, fixed angle for the tool towards the rotation axis.
+Fixed angle
+4-axis machines sometimes have a fixed tilted head, for example a 45 degree head. In this case, the spindle direction is, for example, tilted 45 degrees towards the rotary axis vector, which means the locked axis value must be set to 45 degrees. A value of "+45" means the vector from the tool tip towards the spindle direction and the rotary axis vector (e.g. the x-axis vector which is (1,0,0)) have a +45 degree angle to each other.
+
+5-axis
+This option generates 5-axis simultaneous output. Using this option, you can select four types of tool orientation strategies.
+Tool orientation strategy
+There are four orientation strategies:
+•	Normal to top surface
+•	Align to tilt lines
+•	Parallel to contouring surface
+•	Align to plane normal
+Axis
+Users can select the rotational axis for 4-axis control and the main axis for 5-axis control. The axis can be defined either by using a start point and end point or by using a base point and direction. The base point can be the center point or a user-defined point. The direction can be selected from one of the 3 main axes or a user-defined one. 
+Tilt range
+This option lets you set a tilt range for the tool with a maximum and a minimum degree.
+Maximum angle change
+This option sets the maximum allowed angle change between two consecutive toolpath positions. The calculation engine outputs 5-axis toolpath data that contains the tool tip position and the direction vector of the tool. The direction vectors must not have an angle change more than the value specified here.
+This option also defines the resolution of the maps used for collision checking. This means that collisions are checked every 3 degrees (angle change of the tool axis). A 3 degree step angle is usually enough, depending on the model geometry and the tool geometry. If there are sections along the contour where the tool is very close to the geometry, a 3 degree step might be too large to find a solution and a finer resolution should be used (2 degrees, 1 degree or even smaller).
+This parameter has a big impact on the computing speed, and can cause a failure if there are sections where the solution exists only for a couple of degrees in the orientation of the tool.
+Tool orientation strategy
+Normal to top surface
+On this option the tool will stay parallel to the top surface normals.
+Align to tilt lines
+On this option the tool will align with the input tilt lines.
+The tilt lines snap to the closest contour and the tool direction is given by the tilt line position.
+
+The Interpolate in local frame option activates the interpolation between two consecutive tilt lines in a local frame that move along the contour that they machine. Otherwise, the tool is interpolated vectorially between two tilt lines.
+Parallel to contouring surface
+On this option the tool will be perpendicular to the contouring surface normals.
+The normals on the contouring geometry must always point towards the exterior of the geometry.
+Align to plane normal
+On this option the tool axis is fixed to a user-defined plane normal. The plane is selected from a vector dialog box with X, Y and Z axes.
+
+
+
+
+Calculation based on Deburring
+Deburring
+Today's CAM systems enable you to create operations for any part geometry. Many systems offer fully automated or half automated CAM cycles, collisions are monitored, residual stock material is tracked and taken into consideration, tool manufacturers create special tools for special materials, machine tools provide highly dynamic machines and dedicated software gets the best performance out of the hardware. Parts can be virtually designed, created and produced, and the machining process is already partially considered within the design. Once you have created the part in the CAM system, you only need to put a price tag on it weeks before it is actually machined. However, one last thing is not yet automated and often needs to be performed manually after the machining process. Deburring is the last bastion of the toolpath cycle and takes approximately the same time as fully programming the part on the CAM system.
+After machining, you will find burrs on all parts that have straight edges or non-tangent outer surface topologies. Burrs occur when the tool chips metal off an edge. They are undesirable because they can destroy the functionality of the part and endanger the worker as they are razor sharp. It is nearly always necessary and mandatory to remove them.
+Note
+This deburring module creates a deburring toolpath on the outer edges of a part geometry. By default, the orientation of spherical tools relative to the edge is the bi-vector between the two surfaces of that edge. Special tilt settings and other tools adjust the orientation as required.
+The system has various automation features:
+•	Automatic feature detection
+•	Automatic linking
+•	Automatic lead-in
+•	Automatic collision avoidance.
+The aim is to create a fully automatic toolpath by simply selecting the part geometry.
+To detect all the edges, the geometry input (a mesh) must be of good quality.
+Supported Tools
+The following tools are available for deburring:
+•	End mill
+•	Sphere mill
+•	Bullnose mill
+•	Lollipop mill
+•	Taper mill
+•	Chamfer mill
+Advanced edge definiton
+Minimal sharp edge angle
+All the edges with an angle greater than the specified angle are classified as sharp edges.
+Minimal detection edge length
+Activate this feature to exclude toolpath segments shorter than the specified value.
+
+Limit detection area by height
+The user might want to machine sharp edges in a specific area only. To do this, there is an option to limit the area by a reference axis and a start and end value with respect to the reference axis. Only sharp edges between those boundaries are considered.
+The reference axis specifies the direction in which the area will be limited.
+The start point defines the point from where the limited area starts.
+The end point defines the point where the limited area ends.
+
+Limit detection area by mesh
+The user might want to machine sharp edges in a specific area only. 
+This new feature enables users to select containment bodies. Only edges inside the selected containment bodies will be machined. These must be closed meshes.
+
+Non-sharp edge detection
+This feature deburrs the edges that cannot be determined from the input mesh using the "edges sharper than an angle" threshold.
+The relevant edges might already be rounded or already chamfered in the input mesh. This new option detects the edges as if they were sharp edges.
+
+Path parameters
+Edge shape
+There are three ways to specify the edge shape:
+•	Constant width: The distance between the edges and the edges of the chamfer is constant.
+•	Constant depth: The distance is defined from the center of the ball mill cutter.
+•	Constant radius: For round multiple cuts, use the radius of the edge fillet.
+For constant depth, the width depends on the edge angle. So, if you have a shallow angle, the width will be much bigger than an edge with a small angle. For small values, this does not matter. For large values, it might need to be considered, for example when you create a chamfer.
+Deburring only works with ball mill cutters, so the deburring shape will be a surface that has the same radius as the tool. To minimize this effect, multiple cuts can be applied on the edge.
+Direction
+This defines the direction in which the tool moves on the part depending on the direction of rotation of the machine spindle.
+For Climb, the tool moves in the same direction as the spindle rotation (left tool).
+For Conventional, the tool moves in the opposite direction to the spindle rotation.
+
+Inner corners
+The inner corners can be trimmed to give the toolpath a sharp corner or to add relief grooves. The latter leads to a smoother transition between the specified area that can be machined and the areas that cannot be reached by the tool in the inner corners.
+Relief grooves are only applied to inner corners with equal edge angles on both sides of the inner corner.
+Number of cuts along edges
+This feature lets you place more than one cut along a sharp edge to approximate the flat (chamfer) or rounded (fillet) shape of the edge.
+Spiralize closed contours
+This option allows multiple cuts to use a spiral pattern on closed contours.  
+The spiral option is not available with the relief option for inner corners. If anything goes wrong with the spiral, the original non-spiral contours are used.
+This option avoids step over marks on the deburred edge, and creates a smoother toolpath with less machine movements.
+ 
+Extension
+Add extensions with a defined length to the start and end of each toolpath segment.
+Extensions are created tangentially to the respective start/end of the toolpath segment. When the segment is connected to another segment tangentially, the extension is created along the connected segment and there is an overlap. This behaviour occurs in particular on segments that are close to each other.
+ 
+Path parameters
+Edge shape
+There are three ways to specify the edge shape:
+
+Constant width: The distance between the edges and the edges of the chamfer is constant.
+Constant depth: The distance is defined from the center of the ball mill cutter.
+Constant radius: For round multiple cuts, use the radius of the edge fillet.
+For constant depth, the width depends on the edge angle. So, if you have a shallow angle, the width will be much bigger than an edge with a small angle. For small values, this does not matter. For large values, it might need to be considered, for example when you create a chamfer.
+
+Deburring only works with ball mill cutters, so the deburring shape will be a surface that has the same radius as the tool. To minimize this effect, multiple cuts can be applied on the edge.
+Direction
+This defines the direction in which the tool moves on the part depending on the direction of rotation of the machine spindle.
+
+For Climb, the tool moves in the same direction as the spindle rotation (left tool).
+For Conventional, the tool moves in the opposite direction to the spindle rotation.
+Inner corners
+The inner corners can be trimmed to give the toolpath a sharp corner or to add relief grooves. The latter leads to a smoother transition between the specified area that can be machined and the areas that cannot be reached by the tool in the inner corners.
+
+Relief grooves are only applied to inner corners with equal edge angles on both sides of the inner corner.
+Number of cuts along edges
+This feature lets you place more than one cut along a sharp edge to approximate the flat (chamfer) or rounded (fillet) shape of the edge.
+Spiralize closed contours
+This option allows multiple cuts to use a spiral pattern on closed contours.  
+
+The spiral option is not available with the relief option for inner corners. If anything goes wrong with the spiral, the original non-spiral contours are used.
+This option avoids step over marks on the deburred edge, and creates a smoother toolpath with less machine movements.
+Extension
+Add extensions with a defined length to the start and end of each toolpath segment.
+Extensions are created tangentially to the respective start/end of the toolpath segment. When the segment is connected to another segment tangentially, the extension is created along the connected segment and there is an overlap. This behaviour occurs in particular on segments that are close to each other.
+Drilling
+The calculation based on drilling is a very basic drill cycle. It works without any machining surfaces. Drill positions and orientations will be defined either with points or lines. The cycle is fully connected to MW's tool axis control linking, and gouge checking as well as the roughing options.
+Surface Paths
+Cycles
+With points on the surface the user must select points which are positioned directly on the surface. The orientation of the tool axis is determined by the surface normal.
+Points
+For this cycle the user must select points from the geometry.  The drill cycle starts at the selected points. The orientation must be set up on the Tool axis control tab.
+Lines
+For this cycle the user must select lines from the geometry. The lines define the position and orientation of the tool as well as the drill depth.
+Drill depth
+The depth is the maximum infeed into the surface or measured from the point.
+Drive surface offset
+The offset is a start distance for the drill cycle. It can be used, for example, to compensate rest material.
+Shift normal to surface
+Shifts the first contact of the drilling operation normal to the surface when Drive surface offset is used.
+Axial shift first contact
+Shifts the first contact of the drilling operation axial from the surface when Drive surface offset is used.
+Calculate drill depth from first contact with surface
+Find the first contact point of tool during a drill step and define it as the start point of the drill.
+
+Break Peck Drilling
+Break Peck
+This option is only visible when the Full retract option is active. The Break Peck option is applied for each peck to be drilled in the following way:
+Each peck is firstly divided into a user specified number of sub-pecks.
+Then the depth of a sub-peck is computed by dividing the major peck depth by the number of sub-pecks. After one sub-peck is drilled, the tool retracts with "minimum retract distance" in order to drill the next one.
+
+
+
+Determined Number
+The determined number lets the user choose the number of sub-pecks the initial peck will be divided into.
+Peck drilling
+Peck drilling
+Peck drilling allows you to repeatedly retract after certain depth intervals until the drill depth is reached. This flushes the chips to avoid clogging, which is essential when drill holes are very deep.
+Peck depth
+This represents the depth of each single Peck. The Drill depth will be divided by this number to determine the number of pecks.
+Min retract distance
+The Minimum retract distance represents the distance at witch the Drilling Mill will retract after each Peck.
+Full retract
+When the Full retract option is active, the tool will retract each time (after each peck) at the feed distance, above the piece.
+Gouge check
+Advanced options
+Depending on what type of Retract tool the user chooses, the Advanced options can be different.
+
+For Along tool axis, the following options are available:
+
+Drop tool down wherever needed
+Remove areas where tool drop fails
+Smooth Retracts
+For Along surface normal → Along tool contact line, we have the below options:
+
+Project tool on direction wherever needed
+Move tool outwards wherever needed
+Project tool inwards wherever needed
+Remove areas where project tool fails
+Reverse
+Drop tool down wherever needed
+This option can be used to project a toolpath from the drive surfaces to the check surface.
+Remove areas where tool drop fails: This option can be used to trim the toolpath so that only toolpath segments are left over which touch the check face.
+
+Remove areas where tool drop fails
+This option can be used to project a toolpath from the drive surfaces to the check surface. The projection will be applied in both direction so that it doesn't matter if the check face lies underneath or actually on top of the drive face.
+Smooth retracts
+The aim is to smooth the transition from the collision free area to the tool retraction area. Sudden axis jumps can be avoided. The animation shows the standard retraction without smoothing activated.
+The animation shows the toolpath with smoothing activated. The user can set a smooth distance which determines the start distance of the smoothing to the collision area.
+Project the tool to the direction wherever needed
+This option can be used to project a toolpath from the drive surfaces to the check surface. The projection is applied in both directions, so it does not matter whether the check face lies underneath or on top of the drive face.
+
+
+
+How it works
+The part which should be machined is this random geometry like in the next picture. The aim is to apply simple parallel cuts on all faces.
+Now instead of selecting all blue faces as drive faces, you simply create a new flat surface. The surface must lie above or underneath the part. Note the face can't be in between the blue faces.
+The actual toolpath will be applied on the grey surface.
+The result is a toolpath with parallel cuts. The next thing to do is to bring the toolpath down onto the blue faces.
+A collision check must be activated. Note the retraction direction automatically defines the projection direction. In this example the toolpath must be projected into -Z direction to find the blue faces. Then 'Project tool on direction whereever needed' must be activated. The toolpath now is dropped to the blue faces.
+The tool plunges through the grey drive face and hit the blue part faces. Now actually all motions on the grey faces are not necessary. With the option 'Remove areas where tool drop fails' activated all unnecessary motion will be deleted.
+The maximum projection distance can be used to define a certain inwards maximum projection depth. The machining ends here. In this example it is set to 50 mm. Tip from the part can be reached now.
+Move tool outwards wherever needed
+This option can be used to project a toolpath from the drive surfaces to the check surface. The projection will be applied in both direction so that it doesn't matter if the check face lies underneath or actually on top of the drive face.
+Project tool inwards wherever needed
+This option can be used to project a toolpath from the drive surfaces to the check surface. The projection will be applied in both direction so that it doesn't matter if the check face lies underneath or actually on top of the drive face.
+Remove areas where tool drop fails
+This option can be used to project a toolpath from the drive surfaces to the check surface. The projection will be applied in both direction so that it doesn't matter if the check face lies underneath or actually on top of the drive face.
+Reverse
+This option will reverse the projection direction.
+Retracting tool along tool axis
+This collision control simply retracts the tool along its tool axis from when a collision is detected.
+The picture shows a situation where the tool machining on a flat surface (blue) running into a collision with a check face (red).
+At the colliding area the tool retract along its tool axis.
+After the collision the tool retracts back to the drive surface.
+This retract method can transform a 4axis solution in a 5axis toolapth, when the distance between points is bigger then tool radius.
+Such cases can be resolved by activating "max angle step" from surface page.
+
+
+
+Advanced option - Drop tool after transform or rotate
+5-Axis Projection now offers the ability to translate or rotate the pattern a given number of times prior to projection, making it faster to generate toolpaths with repetitive features such as blades, sculptures or other rotational parts.
+The animation shows a single toolpath created on a virtual surface or wire frame.
+Dropping
+The toolpath after dropping onto the final surface.
+Drop tool down
+Drop tool down wherever needed:
+
+This option can be used to project a toolpath from the drive surfaces to the check surface.
+Remove areas where tool drop fails: This option can be used to trim the toolpath so that only toolpath segments are left over which touch the check face.
+How it works
+The part which should be machined is this random geometry like in the next picture. The aim is to apply simple parallel cuts on all faces.
+Now instead of selecting all blue faces as drive faces, you simply create a new flat surface. The flat surface can lie underneath or above or in between the drive surface. That surface should be used as drive face.
+The actual toolpath will be applied on the grey surface.
+The result is a toolpath with parallel cuts. For now the toolpath is colliding with the blue faces. So at first the collision check must be activated. 'Retract tool along tool axis' should be used. The result is shown in the next picture.
+The toolpath won't gouge the blue faces, but doesn't machine the floor faces either. The next step would be to activate 'Drop tool down wherever needed'. The result is shown in the next picture.
+The tool plunges through the grey drive face and hit the floor faces of the part. Now actually all motions on the grey faces are not necessary.
+
+With the option 'Remove areas where tool drop fails' activated all unnecessary motion will be deleted.
+
+Rotate
+The toolpath after rotation.
+Smooth retracts
+The aim is to smooth the transition from the collision free area to the tool retraction area. Sudden axis jumps can be avoided. The animation shows the standard retraction without smoothing activated.
+The animation shows the toolpath with smoothing activated. The user can set a smooth distance which determines the start distance of the smoothing to the collision area.
+Moving tool along surface normal
+If you choose this option, the tool always retracts along the drive surface normal. In the picture the green surface is used as drive surface. The gray surfaces are the collision check faces. You can see that the tool is retracting along the surface normal direction.
+
+Before collision checking
+The original toolpath is being generated on a 'virtual' drive surface, giving the pattern of the cut.
+
+After collision checking
+This pattern will be projected onto the check surface. This is being done with collision checking 'Retracting tool along surface normal'.
+Apply multi passes after projection
+This feature can be used when multi passes are activated to create roughing slices. The main idea is to be able to apply the multi passes after projecting the toolpath. With this you avoid multiple machining of the same surface.
+Retract tool to cut center
+To avoid the gouge, the cutter retracts to the cut center. The cut center is the center point of the closed contour toolpath. This option can be used, for example, for port machining, where machining is performed in a circular movement around the port faces. The resulting cuts are closed contours.
+
+File example
+Open the file Gouge_Check_Strategy_-_Moving_Tool_Away_-_Retract_Tool_To_Cut_Center_Activated.bin.
+
+This example shows a simple cut-out through a tube. The green drive surface is machined in parallel z-cuts. The red surface is the check surface. With gouge checking, the cutter retracts along the check surface to the cut center.
+Retract along tool contact line
+This option will retract the tool along its contact line with the drive faces. In case of a normal cutter this direction would be the tool axis. In case of a tapered tool the retraction direction is along the tapered angle.
+File example
+The picture shows a swarf toolpath along a wall colliding with a red faces.
+
+
+
+For the tool a tapered cutter is used. The red faces will be used in the collision check and the strategy is 'retract along tool contact line'. The yellow line presents the contact line.
+In the colliding area the tool retract along that line to avoid the collision.
+
+
+
+Retract tool along plane
+The aim is to be able to move the tool in its tool plane. The tool plane in the plane that is normal to the tool axis. Further in case of a collision the tool will be pushed on the tool plane but orthogonal to the cutting direction.
+Retract the tool in +X, -X, +Y, -Y, +Z, -Z, XY, XZ, YZ, optionally in XY, XZ, YZ
+This option assigns the direction in which the tool moves away from the check and drive surfaces.
+To +X, -X, +Y, -Y, +Z and -Z axis direction
+The direction is clearly defined. From the gouging toolpath point the tool retracts to the desired direction until no gouge is detected. Make sure the retraction direction is collision free. For example, if you machine undercuts it does not make sense to retract in the +Z Direction.
+In XY, XZ and YZ plane
+The tool retracts in a plane which is spanned in two directions. This can be X and Y, X and Z, or Y and Z.
+To determine the direction in the plane, the surface normal is projected in this plane. This makes the surface normal flat in the desired plane. The tool is then pushed out of collision in this direction.
+
+Optimized in XY, XZ and YZ
+The tool retracts in a plane which is spanned in two directions. This can be X and Y, X and Z, or Y and Z.
+For each contour, the surface contact points are dropped onto the desired plane to create a 2D contour. The 2D contour is then offset with the tool radius and stock to leave value. The system finds the shortest distance vector to the offset and surface contact point of the tool and uses this as the pushing direction.
+This means the surface normal is no longer used to define the direction of retraction.
+
+User defined direction
+The direction in which the tool retracts can be defined by a vector. To define the vector, set the X, Y and Z components in the dialog. It is also possible to define the direction of the vector by picking a line from the geometry.
+
+
+
+Example
+Open the file Gouge_Check_Strategy_-_Moving_Tool_Away.bin.
+In this example a gouge is detected. If you select move tool in –X, the affected toolpath points move away in the X direction only until the check surface ends and the tool is able to pass.
+Away from origin
+The tool is always pushed away from the origin.
+
+
+
+Advanced control
+The aim is to give more control and constraints for the automatic tilting. Users can give preferences for rotary and tilt angles, also automatic tilting freedom can be constrained with rotary and tilting limits.
+The animation shows a machining where the automatic tilting is not constrained. I order to overcome collisions the tool tilts to every possible solution
+The animation shows that the automatic tilting is constrained so it is not allowed to tilt to the side. What you can see is that due to the constraints not all areas of the machining can be reached.
+
+
+
+After collision checking
+Applying the automatic tilting the tool will be guided collision free along its way.
+Tilting - Relative to cutting directions
+Lead angle to cutting direction
+This angle defines the lead/lag angle of the tool axis from the surface normal in the direction of the toolpath slice
+Note
+•	The lead angle is relative to the cutting direction.
+•	For zigzag machining, the tool orientation flips with every new cut.
+•	For one way machining, the tool orientation does not change.
+Limits relative to surface normal
+User-defined contact point and angle limits are measured relative to the surface normal instead of the initial tool orientation.
+Lead tilt angle/Side tilt angle constraints have different influences depending on tool's contact point and the machining surface. The contact point of the tool is defined in its height profile range.
+Note
+This is available only for surfaces and Geodesic with contact mode patterns.
+
+
+Rotary axis
+This option finds a fixed radial angle for which there is a gouge-free solution. The angle is applied to the whole toolpath. The tilting angle solution is located in a cone around the initial orientation without surpassing the minimum and maximum tilting values around the specified rotary axis.
+
+
+
+Tilt angle
+This feature provides more control and constraints for automatic tilting. Users can enter the rotary and tilt angles and restrain automatic tilting by setting the rotary and tilting limits.
+
+In the animation, automatic tilting is not constrained. To avoid collisions, the tool tilts to every possible solution.
+
+
+
+Lead tilt angle
+This parameter sets the lead angle of the tool relative to the floor surface. Enter an angle in degrees between -90 and +90.
+
+
+
+Side tilt angle
+This angle defines the side tilt value of the tool axis from the surface normal direction based on the toolpath slice direction.
+
+
+
+Note
+
+The side tilt angle is absolute to the cutting direction.
+
+For zigzag machining, the tool orientation does not flip with every new cut. The tool keeps it orientation.
+
+To set the side tilt angle relative to the cutting direction (i.e. the tool axis flips its absolute orientation with every new cut) activate 'Allow flipping side direction'.
+
+
+
+Lead/lag tilt
+This new tilting algorithm replaces the current collision avoidance strategy for tilting: Use lead/lag and side tilt angles. The algorithm takes both degrees of freedom into consideration and is faster and qualitatively better than the previous one. The resulting toolpath is collision free and has smooth axis orientations.
+
+In the first version of this algorithm there are no additional settings, so it is a fully automatic solution.
+
+This strategy can be used for all generic pattern types as well as surface based, triangle mesh based and wire frame based cycles.
+
+The animation shows a surface based 5-axis toolpath. The tool is in collision with the walls.
+
+Tilt rate for automatic tilting
+A new option had been added to automatic tilting.
+This option allows the user to control the maximum tilt rate. When this option is selected, the algorithm tries to maintain a tilt rate smaller than the  user-defined maximum value. The algorithm modifies the tilt angle as required to avoid collisions and also modifies any changes to the tilt angle that are inherited from static tilting methods.
+
+Benefits:
+
+- Create toolpaths within machine capabilities
+
+- Lower accelerations
+
+6 Axis Autotilt
+A new feature is now available for the Automatic tilting gouge check strategy.
+This feature lets you create toolpaths for 6-axis machines.
+
+It either converts a 5-axis toolpath to a 6-axis toolpath with the orientation of the holder relative to the feed direction or  it modifies a 6-axis toolpath to avoid collisions with the given check surfaces.
+
+Benefits:
+- Collision free 6-axis toolpaths
+- Defined orientation relative to the feed direction/initial 6-axis orientation 
+
+toolpath Calculation - Collision control - Automatic tilting
+This new tilting algorithm should replace the current collision avoidance strategy for tilting 'Use lead/lag and side tilt angles'. The algorithm takes both degree of freedom into consideration, but performs much better and faster. The resulting toolpath is not only collision free, it is has also smooth axis orientations.
+In the first version of this algorithm no additional setting is available, leaving it a full automatic solution. Another benefit is that this strategy can be used for all generic pattern types, surface based, triangle mesh based and wire frame based cycles.
+The animation shows a surface based 5 axis toolpath. As you can see the tool is in collision with the walls.
+
+Description
+This feature trims all colliding contour segments out of the toolpath.
+
+
+
+Without the trim and relink toolpath feature, the tool would hit the obstacles.
+When the trim and relink toolpath feature is used, the obstacles are avoided.
+
+Advanced options
+Activate this option to leave out the colliding contour segments. You can also trim the toolpath after, before and between the collisions.
+The contour segments before and after the collision are not trimmed. Only the colliding segments are left out (trim collisions only).
+The contour segments after the first collision are trimmed.
+This options trims the contour segments before the collisions.
+This option trims the contour segments between the collisions.
+
+Stop tool-path calculation
+The toolpath calculation can be stopped at the first collision point that was not resolved by the collision control methods in the "Tilt tool" section. The rest of the toolpath is saved at the initial position, which can also include other collisions. The computation is faster because not all cuts are checked for collisions.
+Also, you can easily check where the tilt method cannot fix the first collision.
+If "spiral" is used for cutting method be aware that no toolpath will be created.
+
+Description
+Report collisions checks for collisions between the tool and the check faces without trying to avoid the collision. It creates a report containing a list of collisions between the different parts of the tool and the surfaces.
+This option reports collisions within the specified tolerance. So, it will report collisions that could occur if other strategies have different tolerances. Also, this option reports a different set of collisions than Report remaining collisions from all strategies in the advanced options.
+Description
+Use this option to handle remaining collisions for links and contours.
+Remaining colliding contours or links
+Where the collisions cannot be resolved using the tilt or retract methods, you can use one of the following options:
+
+Keep
+Trim (and relink)
+Stop the calculation at the first collision
+This feature can be used with the following tilt strategies on the Gouge tab:
+•	Use lead/lag angle
+•	Use side tilt angle
+•	Automatic
+•	3 to 5 axis conversion
+•	Changed fixed tilt angle
+Stop toolpath calculation
+Stop the toolpath calculation at the first collision point that was not resolved by the collision controls methods in the Tilt tool section. The rest of the toolpath is saved in the initial position, which can also include other collisions. Computation time is improved because not all cuts are checked for collisions.
+
+This feature enables you to easily see when the first collision cannot be fixed by the tilt method.
+Report remaining collisions for all strategies
+Collisions can be checked and reported using all the active strategies on the Gouge tab.
+
+
+
+Description
+The tool clearance applies a cylindrical or conical offset to the holder, arbor and shaft.
+
+Note: The arbor is the extension of the tool and is located between the tool and the holder. If the surfaces have a stock to leave value, the clearance and stock to leave values are added to keep the arbor away from the part by a given distance. For example, if the arbor clearance is 0.2 and the user applies a stock to leave of 0.5 on the surfaces, then the arbor is not allowed to come closer than 0.2 + 0.5 = 0.7 to the part. Both positive and negative values are supported.
+Cylindrical clearance - Shaft
+This is the clearance onto the shaft. Only the diameter will be expanded.
+Cylindrical clearance - Arbor
+This is the clearance onto the arbor. The clearance is applied to the diameter as well as to the height.
+Cylindrical clearance - Holder
+This is the clearance onto the holder. The clearance is applied to the diameter as well as to the height.
+Conical clearance - Shaft
+The user must input an upper and lower clearance value. This makes it possible to define the conical clearance.
+This is the clearance onto the shaft
+Note: The upper clearance must be bigger than the lower clearance.
+
+Conical clearance - Arbor
+This is the clearance onto the arbor. The clearance is applied to the diameter as well as to the height.
+Conical clearance - Holder
+This is the clearance onto the holder. The clearance is applied to the diameter as well as to the height.
+Angular clearance
+The angular clearance is applied between the tool and the collision. It spans between the contact point of the tool, the drive surface and the collision point. It can be understood as a protection cone.
+For Taper tools, the angular clearance is calculated on top of the taper angle.
+Check gouge between positions
+Select this option to activate collision checking between toolpath positions. The 5-axis sweep move from one position to the next is used to check for collisions with drive and check surfaces. To ensure proper toolpaths and to avoid gouges, always select this option.
+
+Especially on flat surfaces, toolpath points are generated only at the edge of a surface. Between these points no toolpath points are generated, which means the gouge checking software would not recognize a gouge.
+When you set a distance, this function might not be necessary.
+
+No gouge check between positions.
+
+Upper picture: On the flat part there are no toolpath points between the edges. The tool will gouge the grey check surface. On the round part there are a lot of toolpath points. Here, gouge checking would work even when the function is deactivated.
+
+Option activated:
+
+Lower picture: On the flat part there are no toolpath points between the edges. When this option is activated, the system finds grey check surface and avoids the gouge.
+
+On the round part there are a lot of toolpaths. Here, gouge checking works even when the function is deactivated.
+Trim contour for safe retract
+If "Trim contour for safe retract" is active, it will trim and potentially eliminate, as a last resort, any contour from the toolpath that cannot have collision-free links. The trimming will take place at the start and/or end of the contour, depending on which link cannot be built successfully.
+
+If "Trim contour for safe retract" is inactive, then any links that could not be built collision-free will remain in collision.
+
+Extend tool to infinity
+This turns on and off the extension of tool geometry to infinity. When enabled, the tool, arbor and holder along with the given length are taken into consideration for collision checking. For several reasons, it might be desirable to extend the last used portion of the tool with a cylinder to infinity. This helps the collision checking system to detect all collisions.
+
+A good example is using guide surfaces (e.g. a thin cylinder) and then retracting with the tool to the real part geometry defined as check surfaces. If the total tool length (including holder and arbor) is not long enough, the collision checking system can find a collision free location for the tool between the thin cylinder and real part geometry. In this case, making the tool longer resolves the problem.
+
+When this option is enabled, it is not necessary to change the tool length manually to a larger value.
+
+In another scenario, however, this behavior is not desirable. The lower picture shows a scenario where the tool can move to the area, but the system detects a collision if it is artificially extended to infinity. Therefore, it makes sense to keep this function optional.
+
+Check link motions for collisions
+This parameter enables/disables collision checking for link moves during toolpath generation.
+
+Activated tool parts and check faces are taken from all the gouge check sets. The collision avoidance algorithm uses a simple fall back system which differs according to the type of link:
+
+First Entry and Last Exit are handled differently to interlinks. If the user selects Approach from feed distance and if it fails, the algorithm increases the feed distance up to a limit value. If that fails, the algorithm generates the toolpath for First entry and/or Last Exit from the user-defined values. In this case, the resulting toolpath will be in collision and the user is forced to change some settings.
+If the user selects Approach from rapid distance and it fails, the algorithm increases the retract distance up to a limit value. If that fails, the algorithm changes the retract distance to the user-defined value and increases the distance to the clearance area. If this also fails, the algorithm generates the toolpath for First entry and/or Last Exit using the user-defined values. In this case, the resulting toolpath will be in collision and the user is forced to change some settings.
+If the user selects Approach from clearance area and if it fails, the algorithm increases the retract distance up to a limit value. If that fails, the algorithm changes the retract distance to the user-defined value and increases the distance to the clearance area. The algorithm creates the toolpath for First entry and/or Last Exit using the user-defined values. In this case, the resulting toolpath will be in collision and the user is forced to change some settings.
+
+
+For interlinks :
+The algorithm follows the user options. If one fails, the algorithm tries the next one.
+The order is as given in the user interface:
+1. Direct
+2. Follow Surfaces
+3. Blend Spline
+4.Retract to Feed Distance
+5. Retract to Rapid Distance
+6. Retract to Clearance Area
+For example: if option 2 is selected and fails, option 3 is tried next. If this one fails too, the next one (option 4) is tried, and so on.
+If option 5 fails, the algorithm changes the air move safety distance and tries again. If this change has no positive effect, the next option is tried (option 6).
+For option 6, the algorithm uses the approach from First Entry or Last Exit.
+If all this fails, the algorithm generates a toolpath using the option "6. Retract to Clearance Area". In this case, the resulting toolpath will be in collision and the user is forced to change some settings.
+Check link motions against containment
+This parameter makes sure that direct, blend spline or follow surface links stay within the containments. If the toolpath cross-cuts the containments, the links are replaced by clearance area linking.
+The containments can be
+•	The active containment which can be the 2D containment and/or silhouette containment
+•	Other curves
+•	A user-defined curve
+Examples:
+The upper animation shows linking without collision checking
+The lower animation shows linking with active containment collision checking
+
+
+
+
+
+
+Check tool tip
+This option can be used for the tilt tool away collision checking strategy. It deactivates gouge checking for the radius portion of the flute (when a ball mill or bull mill is used).
+The left picture shows the tool tilting away from the wall to avoid a collision with the holder, which forces the tool tip to gouge the floor. Now the collision checker tries to tilt the tool away from the floor as well, but as you can see this is not possible. The contact point of the tool stays the same, in this case the tool would simply rotate around the contact point of the tool and surface. The collision cannot be solved. The result is a toolpath which is not collision free.
+In the right picture the flute is not checked for collisions. Now the toolpath is not collision free either, but the calculation does not fail because in this case it finds a solution. The remaining collisions can be removed with an additional gouge check strategy.
+
+Calculation based on Existing Toolpath
+There are 4 strategies available:
+•	Convert to 5 axis: This lets you load an existing toolpath and you can basically access all parameter from the standard UI. Note that not all parameter are supportedand it this has to be checked by the integrator.
+•	Autotilt 3 axis to 5 axis: This will convert an existing 3 axis toolpath to a 5 axis toolpath. Only necessary parameter are shown. Only ball mill tools are supported.
+•	Link 2 toolpaths: This allows you to link 2 independent toolpath with a rapid link toolpath. Only possible when both operations use the same tool and tool change is being applied.
+•	Wrapping: The aim is to take existing 3 axis toolpath and wrap them onto a drive surface. The resulting toolpath will be (depending on the drive surfaces shape) a 5 axis toolpath.
+Notes
+For convert to 5 axis and autotilt cutter location simply defined by the input toolpath
+(7). This toolpath usually is a 3 axis toolpath. For the calculation only ball mills are supported. Because of this it is necessary that the input toolpath is calculated to the tool tip (6). Internally that point will be calculated back to the tool center point (2). In case the tool will be tilted it tilts around that center point so that the contact point between tool and part (1) is the same. Note that for the actual
+calculation no surfaces are necessary. They are only important for gouge checking.
+If your tool has a bigger diameter than the tool which was used for creating the input toolpath, then you will have collisions with the target surface (1). In case the tool is smaller, you can't reach the target surface and you won't get a contact point (5).
+The orientation of the tool axis (3) will be controlled by MW's tool axis control parameter as well as the gouge check parameter.
+Target surface (1)- this surface is a gouge check surface and must be specified in case the tool will be tilted with collision checking
+Cutter Center Point (2)
+Tool Orientation (3) - values that represent the orientation of the tool axis.
+Output toolpath (tilted) (4)
+Contact point (5) - the point where the tool touches the material.
+Tool Tip point (6)
+Input toolpath (6)
+
+When 'relative' values or angles in the settings are used, they are meant to be relative from the present toolpath point or to the moving direction of the tool.
+Surface Paths
+Input - Original toolpath
+This is the original toolpath that will be fed into the system. It must be a 3-axis toolpath.
+
+Workpiece
+The workpiece is the part that has been used for generating the 3-axis toolpath.
+Workpiece clearance
+This value defines the offset that has been used for creating the 3-axis toolpath.
+
+Cut Tolerance
+The cut tolerance is the tolerance for the accuracy of the toolpath. This value is the chordal deviation of the toolpath against the surfaces to be machined. In other words, the toolpath can have a maximum error to the surfaces within the range of plus or minus the cut tolerance.
+
+The animation shows a toolpath with a big cut tolerance. A big cut tolerance gives you less toolpath points on the drive surface. Therefore, the generated toolpath does not follow the contour as precisely as a toolpath with a small tolerance. This results in poor surface quality, but it takes less time to calculate. Bigger tolerances are suitable for roughing or for a fast toolpath preview.
+
+The animation shows the same toolpath with a smaller cut tolerance. A small cut tolerance gives you more toolpath points on the drive surface. Therefore, the generated toolpath follows the surface contour more precisely. This results in a very good surface quality, but it takes much more time to calculate. Small tolerances are suitable for finishing operations.
+
+Point Filtering
+This feature allows the user to maintain the high quality toolpath point number and distribution by keeping the input points or by applying filtering for conversion.
+
+Peep input point makes no changes to the toolpath point number and, therefore, all input points are maintained.
+Apply filtering for conversion finds additional points from the 3-axis input and trims them. 
+There will be additional points when it is converted to 5-axis in order to provide the best angle step tilting.
+
+ If the cutting tolerance of the conversion is not within the toolpath input number points range, it is less likely that the points will be filtered.
+Machining direction
+Top: The tool plane direction is above the workpiece.
+Other direction: The tool plane is defined by the user;
+Machining direction:  The tool plane is automatically established by the direction in which the part is machined.
+Tool axis control
+Tilting
+While converting the toolpath into 5 axis, there are areas where the tool does fit (no collision with the holder and part) and where the tool does not fit (collisions with the holder and part). For both situations the user can choose how the tool should be tilted away.
+Where the tool does not fit (collision between holder and check/part surfaces)
+With this option the system tries to keep the tool as much as possible in a vertical position.
+5 axis but stay close to ...
+This angle will preferably used in to avoid the collision. This Angle will be applied even if such a big deviation is not necessary (green tool orientations).
+
+The desired til angle is not a maximum allowance. If the desired tilt angle is not enough to avoid the collision then the tool can over tilt this angle (see tool on the lower right, black tool orientation). The animation shows that actually no collision occurs but the still the tool does tilt away.
+Where the tool does fit (long distance)/Short distance (collision free toolpath)
+This functionality handles the tilting when the tool actually is not in collision.
+The idea is to maintain tilting even when the too could go back to vertical. This would reduce tilting motions.
+
+ 2 options are possible
+1) Stay 5 axis: Here the tool keeps its orientation
+2) Go back to 3 axis: Here the tool tries to go back to vertical
+The animation shows that the tool does tilt back to vertical.
+The animation shows that the tool stays tilted on the collision free zone.
+Short/ long distance threshold
+Collision free zones can be distinguished in short and long distances. E.g. you would like to maintain the tilting for short distances but you might want to go back to vertical on long distances.
+Misc
+This parameter does define the main machining (3 axis) direction. It must be change if the machining direction is not the Z axis.
+Max. til angle
+This angle is the maximum deviation allowed to find a solution (green angle in the picture).
+The system doesn't allow to exceed the max tilt angle. If the max tilt angle needs to be exceeded in order to avoid the collision, then the toolpath will be trimmed (red tool indicating that the max tilt angle exceeds)
+
+Gradual tilting only on connection
+With this parameter activated, the approach and retract motions remain with a static tool axis orientation. Reorientation, eg. between 2 contours, will happen only during connection move (left situation on the picture).
+With this parameter deactivated, the approach and retract motions will already have tool axis orientation changes. Reorientation, eg. between 2 contours, will happen on the approach move , connection move, and retract move.
+Smoothing
+Smoothing is an operation based on interpolation for optimizing the contour while keeping the tilt angles in a limited range.
+
+Smooth tilt angles tries to shape the converted tool path (which may have some deviations) into a clearer one. This option modifies the path in which the contour's vectors are different which gives a fluent move to the tool.
+Smooth rotary angles has an impact on the C-axis in which helps the tool for contouring and positioning along the path.
+Blending distance controls the smoothing tilting by adding orientation points in case of a collision.
+
+Feed rate for clearance blend spline
+The parameter controls the feed rate of the clearance blend spline.
+Check tool parts
+Bull end mills are simply corner radius end mill cutters.  These radius end mills are single ended tools used for making corner radii at the bottom of a milled shoulder. Bull nose cutters have a stronger milling edge than square end mills, so feed rates may be increased and yield longer tool life and greater productivity.  These milling bits may also be used in mold profiling applications leaving smoooth finishes.  These mills are all solid carbide, and are available in many diameter sizes and lengths.
+Corner-chamfer end mills have a square nose with slightly angled corners that help distribute cutting forces evenly to prevent damage to the end mill and extend its life. They are rotated against a workpiece to create a flat-bottomed groove with slightly chamfered inside corners in milling applications where a specific radius size is not required. Each end mill has flutes on its cutting head that carry chips away from the workpiece to prevent damage to the end mill or workpiece. Corner-chamfer end mills are used on CNC or manual milling machines.
+Lollilop end mills are end mills have a long shank and a cutting edge that curves around the top of the ball end, allowing them to reach into pockets to create undercuts.
+Area Roughing
+Description
+The area roughing creates a morphed toolpath for an impeller hub. It can be used to:
+•	create roughing procedures as well as floor finishing procedures;
+•	machine impeller with or without splitter.
+How it works
+Basically the area roughing is built up on an existing toolpath strategy. That toolpath is a swarfed toolpath around the blade faces of the impeller. Once this toolpath is defined, the area roughing can be applied.
+The following picture shows typical impeller geometry.
+For the area roughing it is enough to have only one set of surfaces visible.
+The toolpath pattern morph Parallel to surface is being used. The drive surface in this case is the (grey) floor face.
+The 'Area roughing' function needs an impeller segment of at least two blades defined as drive surfaces. If the impeller has no splitter then the two given blade faces must be selected. If the impeller comes with a splitter face then the two blades faces and also the splitter faces (in this example all blue faces) must be selected.
+The amount of layers depends on settings in the cutting area. In case of a full area, the full hub will be machined.
+In the Tool axis control specify a tilting strategy which provides a swarfing toolpath of the blades. Ideally the selected strategy is 'Tilted relative to machining layer'.
+The resulting toolpath will looks like this:
+
+
+An collision control set must be activated. There are two strategies that must be activated:
+'Tilting tool away with max. angle' and then 'Use side tilt angle' and check 'Drive surface'. This will avoid collisions with the impellers.
+'Retracting tool along tool axis' and then 'Check surface #' and select the (grey) floor face (the same selected as the Single edge). This will assure that the tool will not collide with the floor. The resulting toolpath by now should be gouge free and swarfing. With this toolpath information the system can define the floor contour between the blades, where it starts and where it ends. Now activate the 'area roughing' function.
+The following parameters in the parameter dialog must be set:
+The parameter calculation applied can be:
+After collision control: in this case the collision check will be applied before the area roughing morphes the toolpath.
+Before tilting: in this case the toolpath will be morphed over the floor face before the collision control is applied. The collision checking happens afterwards.
+Select 'Calculation applied after collision control'
+
+A rotation axis must be selected. Available are X, Y, Z and User defined axis directions. In case of selecting the option user defined axis, the axis can be picked from the geometry or can be set by vectors in X, Y and Z.
+A rotary axis base point must be set if the rotation axis is shifted in one direction.
+The maximum step over defines the maximum distance between two cuts. This distance in the actual toolpath could be smaller than the set value but never larger. Alternatively to the maximum step over a number of cuts per section can be defined.
+The cutting method defines the connection between the cuts. The options are:
+One way (along rotary axis): machining starts at the upper edge of the impeller floor face, continues along the blades and stops at the lower edge of the floor. Then it retracts to the beginning and starts over with the next cut.
+One way (along reverse rotary axis): machining starts at the lower edge of the impeller floor face, continues along the blades and stops at the upper edge of the floor. Then it retracts to the beginning and starts over with the next cut.
+Zig zag: machining starts at the edge of the impeller floor face, continues along the blades to the other edge, steps over to the next cut at the same edge and continues machining to the first edge. The sequence for the cuts is from the left to the right.
+Zig zag (climb only): The machining begins in the center of the surface and progresses outwards for each side.
+6) The area to be machined can be:
+Complete: the whole area between the two main blades.
+Left: only between the left main blade and the splitter blade.
+Right: only between the right main blade and the splitter blade.
+7) With 'Trim cuts' the length of the cuts can be trimmed by % of cut length: here the actually length will be cut by a % of its length 
+when curvature exceed tool radius: This will trim the cut when it is moving around the upper radius of the blade, exactly in that moment when the curvature of the blade gets bigger than the tool radius.
+8) Extension: An Extension can be applied to the start and end of a cut. Note that the extension is radial to the rotation axis.
+9) Depth cuts: The depth will be applied onto each layer. The tool will retract along the tool axis by a certain step over and depth of cuts. The aim is to get a decent cut on the floor and retract that along the tool axis to fill the room up to the shroud.
+10) Smoothing above the splitter will create a morphed toolpath in the area above the splitter. This smoothing will be used for finishing. The main aim is to provide a flowline for the medium.
+The resulting toolpath should look like this:
+Depth cuts
+Description
+Depth cuts are similar to multi-passes. With multi-passes you always work top down to the surface, independent of your tool axis. With depth cuts you work in the direction of the tool axis. That means that if the tool axis is tilted by an angle, the following depth cut connects with the same angle. The roughing passes are located above the finishing passes. So, if you have a lot of material to mill, activate roughing passes. If you are closer to the final surface and you want thinner cuts, activate the finishing passes.
+A combination of multi-passes and depth cuts creates a mixture of both cuts. Hierarchically, the depth cuts come first. This means that a set of all multi-passes belong to a single depth cut. For example, if you have 10 depth cuts and 10 multi-passes cuts, you get 10 * 10 = 100 cuts.
+The infeed from one pass to another pass is performed in the direction of the tool side tilt angle.
+There are two user-defined parameters for Roughing passes and/ or Finishing passes:
+•	Number is the number of cuts.
+•	Spacing is the distance between the cuts.
+Apply depth to
+There are three options:
+•	Whole toolpath
+This is the standard setting and applies the depth cuts to every contour of the toolpath.
+•	First slice only
+This applies the depth cuts on the first contour.
+•	First pass only
+This applies the depth cuts to the first set of passes (when multi-passes is activated).
+Sorting
+Sort by passes means the machining is performed in layers.
+Sort by slices means machining is performed in slices. 
+Use ramp
+The ramp option turns the individual slices into one spiral slice, starting from the roughing passes and working towards the finishing passes. The ramp option does not affect the start and stop position of the tool.
+ 
+Mirror
+Description
+The idea is to create a mirror image of a toolpath by reflecting it symmetrically with respect to a defined axis and point.
+Mirror parameters
+Mirror plane
+'Plane normal' allows to set the mirror plane normal vector. There are 4 options:
+
+X axis
+Y axis
+Z axis
+User defined.
+'Plane base point' allows to set the mirror plane base point in X,Y,Z coordinates.
+
+Toolpath copy features allows only for the mirrored toolpath to be shown if needed. The "Toolpath copy" option will be active as default, showing both the mirrored toolpath and the original one. By deactivating it only the mirrored toolpath will be provided.
+Morph pocket
+Description
+With morph pocket you can generate toolpaths for simple pockets. For the pocket option it’s important that you work on a closed set of pocket geometric surfaces. It’s not enough to select just a flat surface.
+The morphing options
+•	'Move': This option sets the machining direction. It can be from 'outside to inside' or from 'inside to outside'.
+•	'Step over value'. This option sets the maximum distance between two cuts.
+•	'Pocket area': This option defines whether you want to machine the whole pocket, when set on 'Full', or if you want to stop machining after special amount of cuts, when set on 'Number of cuts'. You can enter the number under 'number of cuts'.
+•	'Number of cuts': This parameter sets the number of roughing cuts for a morph pocket. If this parameter is used, then it is probable that the whole pocket will not be machined
+•	When you activate 'spiral machining' the tool movement changes from parallel cuts to a spiral machining toolpath.
+
+File Example
+•	Open the file 'Morph_Pocket.bin' from  'Morph_Pocket' directory.
+Here you can see an example. To morph a pocket into this block you select the yellow surfaces.
+Multi passes
+Description
+With multi passes you extend your present toolpath to multiple layers on the same geometry. The shape of the toolpath doesn't change. The step over direction from one slice to the other, or from one pass to the other is always in direction of the surface normal independent from the tool axis orientation. The roughing passes are located above the finishing passes. So if you have much material to mill, activate roughing passes. If you are closer to the final surface and you want to make thinner cuts activate the finishing passes.
+'Number' is the amount of cuts and "spacing" is the distance between the cuts
+'Sort by slices' means machining is in slices.
+'Sort by passes' means that the machining is in layers.
+Sort by slices' means machining is in slices.
+Gradual machining angle XY change
+This parameter lets the tool path rotate with every new pass with the set angle value.
+Plunge
+Description
+The plunge option let the tool plunge to the drive surface along its tool axis. The step length (green arrows) describes the distance between two plunge cutting moves of tool. It controls the step on the surface as well as angle step. The plunge height (red arrows) is the depth of the plunging measured from the tool position on the surface. The slide distance set the retraction distance back along the step length
+File Example
+Rotate transform
+Description
+This option lets you create full rotation symmetric operations, e.g. for impeller machining, and apply a pattern multiple times on a surface.
+
+With this option you can:
+
+rotate and copy the toolpath around an axis
+translate and copy the toolpath in a specific direction.
+
+
+Orientation
+Axis/Direction:
+
+This setting defines two things:
+
+the axis around which the toolpath rotates
+the direction in which to shift the toolpath.
+You can use the X, Y, Z axis directions as well as user-defined axis directions. For user-defined axis directions, you can pick the axis from the geometry or set it using X, Y and Z vectors.
+
+Base point:
+
+The base point defines the position for the rotation axis.
+
+Number of steps: This parameter defines how often the toolpath is copied. When the number of steps is 1, the existing toolpath is moved.
+
+
+
+Rotate
+Start angle: This angle defines the first rotated position for the toolpath.
+
+Rotation angle: The rotation angle is the increment between two rotated toolpaths.
+
+
+
+Sorting
+Sort By: This defines the order and the amount for the rotation/translation:
+
+Complete toolpath: The complete toolpath section will be rotated in one piece.
+Passes: The rotation will be applied in layers. The order for two rotations would be: 1st layer of 1st toolpath, 1st layer of 2nd toolpath. Then 2nd layer of 1st toolpath, 2nd layer of 2nd toolpath and so on.
+Slices: The rotation will be applied in slices. The order for two rotations would be: 1st slice of 1st toolpath, 1st slice of 2nd toolpath. Then 2nd slice of 1st toolpath, 2nd slice of 2nd toolpath and so on.
+Partial toolpath: Only a percentage of the toolpath will be rotated. In this case a value must be specified in the field Perc. of whole toolpath.
+Apply linking: The linking can be applied before or after rotation.
+
+If the linking is applied before rotation then all rotated toolpaths have same linking segments like the initial toolpath.
+If the linking is applied after rotation then the linking of the rotated toolpaths will be collision checked and eventually taken out. So, this option works only with activated collision control.
+Apply stock: The stock can be applied before or after rotation.
+
+If the stock is applied before rotation then all rotated toolpaths will have the same stock definition as the initial toolpath.
+If the stock is applied after rotation then the stock definition will be checked for every rotated toolpath.
+Transform
+Start distance: This distance defines the first position for the toolpath.
+Step over distance: The step over distance is the increment between the toolpaths.
+Sorting
+Description
+Reverse order of...: This option reverses the order of cuts for 'depth cuts' or 'multi passes'.
+Connect slices by the shortest distance
+This option optimizes the cutting method for 'depth cuts' or 'multi passes' when the sorting is set to 'slices'. The option will change the cutting method within one slice from one way to zig zag.
+In case of complete toolpath
+this options swaps as well the cut order of the entire passes and slices as the order of the single cuts with in one pass or slice. Eg. If the default machining would start from the fifth pass moving from left to right, the new order with the option activated now starts from the first layer moving from the right to the left.
+In case of passes
+by default the machining starts with the slice or pass which is considered as the last or the cut with the biggest distance to the machining surface. Setting the option to 'passes' simply swaps the cut order. Now the cut which is next to the drive face is the first cut.
+Surface paths
+Input
+This lets you load an existing toolpath and you can basically access all parameter from the standard UI. The aim is that you use tool axis control and gouge check to modify the toolpaths as you need it.
+Note that not all parameters are supported and it this has to be checked by the integrator.
+The cut tolerance is the tolerance for the accuracy of the toolpath. This value is the chordal deviation of the toolpath against the surfaces to be machined. In other words, the toolpath can have a maximum error to the surfaces in the range of plus or minus cut tolerance.
+The animation shows a toolpath with a big cut tolerance. A big cut tolerance gives you less toolpath points on the drive surface. So the generated toolpath is less precise to the surface contour. The result of the machining is a poor surface quality but it takes less time to calculate. Bigger tolerances are suitable for roughing or for a fast toolpath preview.
+The animation shows the same toolpath with a smaller cut tolerance. A small cut tolerance gives you more toolpath points on the drive surface. So the generated toolpath is more precise to the surface contour. The result of the machining is a very good surface quality but it takes much more time to calculate.  Small tolerances are suitable for finishing operations.
+
+Point Filtering
+The feature allows the user to maintain the high quality tool path point number and distribution by keeping the input points or by appling filtering for conversion.
+The "keep input point" option has no changes in its tool path point number therefor all input points can be maintained.
+"Apply filtering for conversion" option is finding additional points from 3 axis input and trims them. 
+There will be additional points when it is converted to 5 axis in order to provide the best angle step tilting.
+ If the cutting tolerance of the conversion is not in the tool path input number points range then it's less likely that the points will be filtered.
+
+Links
+New links: In this case all existing links will be replaced with the links from the link page of the user interface.
+Use links from input toolpath: In this case the existing links will be used. The settings from the link page will be hidden.
+ Contour feed rates
+New feed rates: In this case all existing feed rates will be replaced with the values from the feeds page of the user interface.
+Use feed rates from input toolpath: In this case the existing feed rates will be used.
+Plunge moves after conversion (in case of 5 axis)
+The 3 to 5 axis conversion support now rapid feed during the 5 axis plunge motion. Until now it was possible only to have link motions with machining feed rate, after conversion.
+Common direction
+Description
+This option is available for all tilting strategies. The aim is to find a single tool axis orientation on the full toolpath or a single contour.
+The user must set the initial type of tilting, e.g. Tilted through point. The tilting then automatically alternates. With common direction, the tool axis is set to a normalized, single direction for all toolpath points.
+The main application is machining shallow areas while automatically maintaining a single indexed orientation.
+
+
+Note
+When the toolpath spirals around a blade this feature is not feasible.
+Location
+You can find this option under:
+Tool axis control tab
+Common direction is available for spherical and barrel cutters.
+File Example
+Default tilting strategy.
+File Example
+Common direction for single contours
+
+Output format
+Description
+This parameter sets the output format for 3-, 4- or 5-axis machining. The output for 5-axis machining uses the complete freedom of the tilt range. This freedom is limited by 1 degree for 4-axis machining and 2 degrees for 3-axis. For 4-axis output, the portion of the 5th axis is projected back onto the selected 4th axis. For 3-axis output, the portion of the 5th and 4th axes is projected back onto the selected 3-axis machining direction. This parameter influences the behavior of the tool contact point.
+In the images on the right, the tool performs flank milling around the cylinder, along the wall. The tilt angle on the wall changes as it goes around the cylinder. The toolpath was created with the pattern parallel to the surface. The drive surface is the wall, the guiding surface is the floor (cylinder).
+
+5-axis output format
+Tilting:
+For 5-axis output, there are no axis limitations for tool tilting.
+This means the tool can tilt sideways (left picture) and perform a lead tilt (right picture) as it goes around the wall.
+
+Contact point:
+On the drive surface: The contact point is always fixed. It is always positioned close to the drive surface edge.
+On the tool: For ball mill and bull mill tools, the contact point is always on the radius of the tip. For flat end tools, it is on the edge.
+For the side tilt direction (left picture) and the lead tilt direction (right picture), the tool always rotates around the surface contact point (red dots). But, in this example, the ball mill tools would cause gouges because of the walls' deep surface contact point and because the cylinder is the floor surface. This is not compensated automatically, so in this case a gouge check is necessary.
+
+4-axis output format
+Tilting:
+The picture shows the progression from 5-axis to projection of the 5th axis and then 4-axis.
+When using only 4-axes, the 5th component of the tool axis vector (2) is projected onto the plane (3) of the 4th axis (1).
+For 5-axis output, the side tilt constantly changes. For 4-axis, the side tilt angle is fixed. Flank milling is not possible any more for this part.
+While the side tilt is fixed, the tool is still able to tilt in the 4th axis lead and lag directions.
+Lock the fifth axis at:
+Sometimes, 4-axis machines have a fixed tilted head mounted, e.g. a 45 degree head. In this case, the spindle direction is tilted 45 degrees to the rotary axis vector. The locked axis value must, therefore, be set to 45 degrees. An angle of +45 means that the vector from the tool tip towards the spindle direction and the rotary axis vector (e.g. the x-axis vector which is (1,0,0)) are at a +45 degree angle to each other.
+This parameter can also be used in combination with a 5-axis machine. To reduce rotary axis motion, you can use a 5-axis machine and select a 4-axis output toolpath with a fixed 5th angle. This means that one of the rotary axes is fixed for the whole toolpath.
+Point tool to rotary axis:
+The tool is forced to tilt through the rotary axis (right picture) and can no longer tilt in the lead/lag direction.
+Axis offset
+This option applies a constant offset between the tool axis and the rotary axis.
+The option adds the offset to your fixed axis and the tool will machine the workpiece with the appropriate offset parallel to the fixed axis.
+The offset can be 0 or the desired value.
+The aim is to keep the tool permanently in the desired axis position.
+Conditions:
+The offset option is available only for the Surfaces and Geodesic Machining strategies and can only be used with the Sphere Mill tool.
+When another strategy is used or the tool is not Sphere Mill, the Offset option is hidden.
+Tilting relative to cutting:
+This option can only be used when the tool axis points through the rotation axis. This provides constant 4-axis rotary machining while tilting relative to the cutting direction.
+The animation shows 4-axis machining. The tool axis remains tilted through the rotation axis while the tool follows the tilted wall.
+Contact point:
+On the drive surface: The contact point is always fixed. It is always positioned close to the drive surface edge.
+On the tool: For ball mill and bull mill tools, the contact point is always on the radius of the tip. For flat end tools it is on the edge.
+For the side tilt direction (right picture) and the lead tilt direction (left picture) the tool always rotates around the surface contact point (red dots). But, in this example, the ball mill tools would cause gouges because of the walls' deep surface contact point and because the cylinder is the floor surface. This is not compensated automatically, so in this case a gouge check is necessary.
+3 axis output format
+Tilting:
+The picture shows the following progression: 5-axis -> projection of the 5th axis -> 4-axis - projection of the 4th axis -> 3-axis.
+When using only 3-axes, the 5th component of the tool axis vector is projected onto the plane of the 4th axis and then to the main machining direction (1).
+For 5-axis output, the side tilt and lead/lag constantly changes. The 3 axis output format does not allow tilting.
+The tool axis direction must be defined by the user, e.g. machining parallel to Z would be a vector of 0, 0, and 1. This parameter defines the 3-axis cutting direction (tool plane direction). You can use this parameter to generate toolpaths where the tool axis direction is from the top view, side view, front view or any other user-defined direction. The generated toolpath is formatted as 5-axis moves, but their tool axis orientation is always parallel to this vector. The x,y,z values define a vector in world coordinates. This vector defines the direction of the spindle. For example, a value of 0,0,1 means the spindle comes from the top view. In other words, the vector can be understood as a vector that starts from the tool tip and extends towards the spindle direction.
+Contact point:
+On the drive surface: The contact point is always fixed. It is always positioned close to the drive surfaces edge.
+On the tool: For ball mill and bull mill tools, the contact point is always on the radius of the tip. For flat end tools it is on the edge.
+3-axis output, especially in this example, is not applicable because the tool would be forced to reach all surface areas and, due to the fixed orientation, it would cause collisions.
+Dropping
+Dropping
+The toolpath is located above or beneath the drive surface and is dropped in a certain direction onto the surface.
+Input toolpath
+This lets you load an existing toolpath and you can basically access all parameter from the standard UI. The aim is that you use tool axis control and gouge check to modify the toolpaths as you need it.
+Cut tolerance
+The cut tolerance is the tolerance for the accuracy of the toolpath. This value is the chordal deviation of the toolpath against the surfaces to be machined. In other words, the toolpath can have a maximum error to the surfaces in the range of plus or minus cut tolerance.
+Info
+Tool axis control and Gouge check page are the same as for the Convert pattern.
+Link 2 toolpaths
+ Link 2 toolpaths
+This allows you to link 2 independent toolpaths with a rapid link toolpath. It is only possible when both operations use the same tool and a tool change is being applied
+Link points
+Two link points must be provided:
+The position and vector of the last toolpath point of the first position.
+The position and vector of the first toolpath point of the second position.
+6 Axis Link
+The Link 2 toolpaths pattern needed the option to provide a 6-axis start/endpoint.
+With the new UI, the point inputs now support 6-axis input by enabling the 6 Axis Link parameter and setting the rotation though the RST vectors.
+The 6-axis direction must be perpendicular to the original tool axis position and vectors.
+Check faces
+The check faces are protected while travelling between operations. These faces are usually the part itself or some additional check faces, such as vices.
+Clearance
+The clearance is the minimum distance between the tool and the check faces.
+Clearance direction
+This parameter allows the user to decide the retract direction. The default option is Z-axis. This option is used for cylinder and sphere links.
+
+Automatic
+Automatically define and detect the link type and dimension.
+A plane is used when both link points have the same vector.
+A cylinder is applied if the vectors are not parallel but on the XY, XZ, and AZ plane.
+A sphere is generated in any other direction of the vectors.
+
+User defined
+The user can manually set the link type to plane, cylinder, sphere or direct.
+User defined link settings
+The user can manually set the link type to plane, cylinder, sphere or direct.
+Dimension
+The dimensions can be set manually, or they can be automatically determined by the system. When set manually, all necessary parameters must be defined.
+Angle step for rapid moves
+The threshold for a maximum segment length of the cylinder or sphere which is defined by an angle.
+Smooth arc
+The smooth arc function nicely rounds the connection between the clearance area and the axial retraction toolpath segment.

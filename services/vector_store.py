@@ -1,65 +1,36 @@
-import threading
-import logging
-import faiss
+import uuid
 import numpy as np
+from sentence_transformers import SentenceTransformer
+import faiss
 
-class VectorStoreManager:
-    def __init__(self, dimension: int):
-        """
-        Initialize a local vector store using FAISS.
-        
-        Args:
-            dimension (int): The dimension of the embedding vectors.
-        """
-        self.dimension = dimension
-        self.index = faiss.IndexFlatL2(dimension)  # L2 distance for similarity search
-        self.metadata = {}
-        self.lock = threading.Lock()  # Ensure thread safety
-        logging.basicConfig(level=logging.INFO)
+class VectorStore:
+    def __init__(self, embedding_model: str = "all-MiniLM-L6-v2", embedding_dimension: int = 384):
+        # Initialize embedding model
+        self.model = SentenceTransformer(embedding_model)
+        # Initialize FAISS index
+        self.index = faiss.IndexFlatL2(embedding_dimension)  # L2 distance for similarity search
+        self.metadata_store = {}  # Dictionary to map vector IDs to metadata
 
-    def store_embeddings(self, doc_id: str, embedding: np.ndarray, text_content: str):
+    def generate_embedding(self, text: str) -> np.ndarray:
         """
-        Store a document's embedding locally.
-        
-        Args:
-            doc_id (str): Unique identifier for the document.
-            embedding (np.ndarray): The embedding vector.
-            text_content (str): The document's content.
+        Generates an embedding for the given text.
         """
-        if doc_id in self.metadata:
-            raise ValueError(f"Document ID '{doc_id}' already exists.")
-        
-        if embedding.shape[0] != self.dimension:
-            raise ValueError(f"Embedding dimension {embedding.shape[0]} does not match expected {self.dimension}.")
-        
-        embedding = embedding.astype("float32")
-        with self.lock:  # Ensure thread safety
-            self.index.add(np.array([embedding]))
-            self.metadata[self.index.ntotal - 1] = {"id": doc_id, "content": text_content}
-        logging.info(f"Stored embedding for document '{doc_id}'.")
+        return self.model.encode(text, convert_to_tensor=False)
 
-    def query_embeddings(self, query_embedding: np.ndarray, top_k: int = 5):
+    def store_embeddings(self, text_chunks):
         """
-        Query the vector store for similar embeddings.
-        
-        Args:
-            query_embedding (np.ndarray): The query embedding vector.
-            top_k (int): Number of closest matches to return.
-        
-        Returns:
-            List[dict]: A list of matches with their metadata and similarity scores.
+        Generates embeddings for text chunks and stores them in the FAISS vector database.
         """
-        if query_embedding.shape[0] != self.dimension:
-            raise ValueError(f"Query embedding dimension {query_embedding.shape[0]} does not match expected {self.dimension}.")
-        
-        query_embedding = query_embedding.astype("float32").reshape(1, -1)
-        with self.lock:  # Ensure thread safety
-            distances, indices = self.index.search(query_embedding, top_k)
-        
-        results = []
-        for distance, idx in zip(distances[0], indices[0]):
-            if idx != -1:  # Valid index
-                result = self.metadata[idx]
-                result["score"] = distance
-                results.append(result)
-        return results
+        for chunk in text_chunks:
+            embedding = self.generate_embedding(chunk["text"])
+            vector_id = str(uuid.uuid4())
+            self.index.add(np.array([embedding]))  # Add vector to FAISS index
+            self.metadata_store[vector_id] = {**chunk["metadata"], "text": chunk["text"]}
+
+        return {"status": "success", "processed_chunks": len(text_chunks)}
+
+    def get_index(self):
+        return self.index
+
+    def get_metadata_store(self):
+        return self.metadata_store

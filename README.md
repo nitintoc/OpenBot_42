@@ -28,6 +28,17 @@ It currently includes 3 services:
 2. Embedding: creates an embedding out of the saved text
 3. VectorStore: stores the embedding in a vector database
 
+Using API:
+Requirements:
+Python 3.10 and above
+
+1. clone the repo
+2. move to the folder where the repo is cloned (using terminal like powershell etc)
+3. pip install -r requirements.txt
+4. run the app using the command : python -m uvicorn app:app --reload --host 0.0.0.0 --port 8000 ( note that one can change the port based on the availability)
+5. The app would be running on  http://127.0.0.1:8000
+6. Either use curl request or the FastAPI swagger UI to use the api. In order to use the UI go to: http://127.0.0.1:8000/docs
+
 The client uploads a document (sending a HTTP POST request) to file_manager service. 
 The content is extracted within the file_manager and saved.
 The extracted content is then passed to the EmbeddingManager. An embedding is created out of the extracted content

@@ -1,72 +1,75 @@
-import os
-from pathlib import Path
 import PyPDF2
-import chardet
+import logging
 import uuid
+from typing import List, Dict, Any
+import chardet
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-class FileManager:
-    """
-    This class manages the uploading,
-    saving and extracting the content of the
-    uploaded file that can be later utilized for
-    RAG.
-    """
-    def __init__(self, upload_dir):
-        self.upload_dir = Path(upload_dir)
-        self.upload_dir.mkdir(parents=True, exist_ok=True)
-
-    def file_validate(self, file):
+class FileReader:
+    def read_file(self, file) -> List[Dict[str, Any]]:
         """
-        Validate if the file is a PDF or text file.
-        Future improvement: allow scanned documents (PDF).
-        """
-        return file.content_type in ["application/pdf", "text/plain"]
+        Reads a file and returns chunks of text with associated metadata.
 
-    def unique_file_name(self, file):
-        """
-        Generate a unique file name to prevent overwriting.
-        """
-        return f"{uuid.uuid4()}_{file.filename}"
+        Args:
+            file: A file-like object with 'filename' and 'content_type' attributes.
 
-    async def save_file(self, file):
+        Returns:
+            A list of dictionaries containing text chunks and metadata.
         """
-        Save the uploaded file asynchronously to the upload directory.
-        """
-        if not self.file_validate(file):
-            raise ValueError("Invalid file type. Only PDF and text files are supported.")
+        file_id = str(uuid.uuid4())  # Generate a unique ID for each file
+        metadata = {
+            "file_id": file_id,
+            "filename": file.filename
+        }
+        text_chunks = []
 
-        file_path = self.upload_dir / self.unique_file_name(file)
-        with open(file_path, "wb") as f:
-            content = await file.read()
-            f.write(content)
-        return file_path
+        try:
+            if file.content_type == "application/pdf":
+                self._read_pdf(file, metadata, text_chunks)
+            elif file.content_type == "text/plain":
+                self._read_text(file, metadata, text_chunks)
+            else:
+                raise ValueError(f"Unsupported file type: {file.content_type}")
+        except Exception as e:
+            logger.error(f"Error reading file {file.filename}: {e}")
+            raise
 
-    def parse_file(self, file_path):
-        """
-        Parse file and extract the content from the PDF or text file.
-        """
-        ext = file_path.suffix.lower()
-        content = ""
+        return text_chunks
 
-        if ext == ".pdf":
-            with open(file_path, "rb") as f:
-                reader = PyPDF2.PdfReader(f)
-                for page in reader.pages:
-                    text = page.extract_text()
-                    if text:
-                        content += text
-        elif ext == ".txt":
-            with open(file_path, "rb") as f:
-                raw_data = f.read()
-                detected_encoding = chardet.detect(raw_data)['encoding']
+    def _read_pdf(self, file, metadata, text_chunks):
+        """Helper method to extract text from a PDF file."""
+        try:
+            reader = PyPDF2.PdfReader(file.file)
+            for i, page in enumerate(reader.pages):
+                text = page.extract_text()
+                if text:  # Skip empty pages
+                    text_chunks.append({
+                        "text": text.strip(),
+                        "metadata": {**metadata, "page_number": i + 1}
+                    })
+                else:
+                    logger.warning(f"Empty or non-extractable text on page {i + 1}")
+        except Exception as e:
+            logger.error(f"Error processing PDF file {metadata['filename']}: {e}")
+            raise
 
-            with open(file_path, "r", encoding=detected_encoding) as f:
-                content = f.read()
-        else:
-            raise ValueError("Unsupported file. Only PDF and text files are accepted.")
-        
-        if not content.strip():
-            raise ValueError("File content is empty or could not be extracted.")
-        
-        return content
+    def _read_text(self, file, metadata, text_chunks, chunk_size=1000):
+        """Helper method to extract text from a plain text file and split into chunks."""
+        try:
+            raw_data = file.file.read()
+            encoding = chardet.detect(raw_data)['encoding'] or 'utf-8'  # Auto-detect encoding
+            text = raw_data.decode(encoding).strip()
+
+            # Split text into smaller chunks for better processing
+            for i in range(0, len(text), chunk_size):
+                text_chunks.append({
+                    "text": text[i:i + chunk_size],
+                    "metadata": {**metadata, "chunk_number": i // chunk_size + 1}
+                })
+
+        except UnicodeDecodeError as e:
+            logger.error(f"Encoding error in file {metadata['filename']}: {e}")
+            raise

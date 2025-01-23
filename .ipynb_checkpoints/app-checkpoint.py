@@ -1,109 +1,105 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, Query
-from pydantic import BaseModel
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from services.file_reader import FileReader
+from services.vector_store import VectorStore
+import logging
 from typing import List
-import numpy as np
-from services.file_manager import FileManager
-from services.embeddings import EmbeddingManager
-from services.vector_store import VectorStoreManager
-from fastapi.responses import JSONResponse
+import subprocess
 
-# Initialize FastAPI app
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 app = FastAPI()
 
 # Initialize services
-file_manager = FileManager(upload_dir="uploads")
-embedding_manager = EmbeddingManager(model_name="sentence-transformers/all-MiniLM-L6-v2")
+file_reader = FileReader()
+vector_store = VectorStore()
 
-# Initialize vector store with embedding dimension
-DIMENSION = 384  # Embedding dimension used by the model
-vector_store = VectorStoreManager(dimension=DIMENSION)
+from services.file_reader import FileReader
+from services.vector_store import VectorStore
 
-# Request body model for querying documents
-class QueryRequest(BaseModel):
-    query: str
-    top_k: int = 5
+app = FastAPI()
+logger = logging.getLogger(__name__)
 
+# Initialize the services
+file_reader = FileReader()
+vector_store = VectorStore()
 
 @app.post("/upload")
-async def upload_documents(files: List[UploadFile] = File(...)):
-    """
-    Upload multiple documents and store their embeddings.
-    """
-    stored_documents = []
-    
+async def upload_files(files: List[UploadFile] = File(...)):
+    results = []
+
+    allowed_types = {"application/pdf", "text/plain"}
+
     for file in files:
+        logger.info(f"Processing file: {file.filename} of type {file.content_type}")
+
+        if file.content_type not in allowed_types:
+            logger.error(f"Unsupported file type: {file.filename}")
+            results.append({"filename": file.filename, "status": "error", "message": "Unsupported file type"})
+            continue
+
         try:
-            # Validate the file type
-            if not file_manager.file_validate(file):
-                raise HTTPException(status_code=400, detail=f"Unsupported file type: {file.content_type}")
+            # Step 1: Read and chunk the file
+            text_chunks = file_reader.read_file(file)
 
-            # Save file to disk
-            file_path = await file_manager.save_file(file)
-            
-            # Extract text from the file
-            text_content = file_manager.parse_file(file_path)
-            
-            # Generate embeddings
-            embeddings = embedding_manager.generate_embeddings([text_content])
-            
-            # Ensure embeddings are NumPy arrays
-            if not isinstance(embeddings, np.ndarray):
-                embeddings = np.array(embeddings, dtype="float32")
-            
-            # Store embeddings in the vector store
-            doc_id = file.filename  # Using filename as unique document ID
-            vector_store.store_embeddings(doc_id, embeddings[0], text_content)
-            
-            stored_documents.append({"id": doc_id, "content": text_content})
-        
+            if not text_chunks:
+                logger.warning(f"No text extracted from file: {file.filename}")
+                results.append({"filename": file.filename, "status": "warning", "message": "No text extracted"})
+                continue
+
+            # Step 2: Store embeddings along with metadata
+            store_result = vector_store.store_embeddings(text_chunks)
+
+            results.append({"filename": file.filename, "status": "success", "processed_chunks": store_result["processed_chunks"]})
+            logger.info(f"File processed successfully: {file.filename}")
+
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Error processing file '{file.filename}': {str(e)}")
-    
-    return JSONResponse(
-        content={"message": "Files uploaded and embeddings stored", "documents": stored_documents},
-        status_code=201
-    )
+            logger.error(f"Error processing file {file.filename}: {str(e)}")
+            results.append({"filename": file.filename, "status": "error", "message": str(e)})
+
+    return {"message": "Files processed", "results": results}
 
 
-@app.post("/query")
-async def query_documents(query: str = Query(..., description="The query text to search for"),
-                           top_k: int = Query(5, description="The number of results to return")):
-    """
-    Query the stored embeddings for similar documents.
-    """
-    if not query:
-        raise HTTPException(status_code=400, detail="Query text is required")
+@app.post("/answer")
+async def answer_query(data: dict):
+    query = data["query"]
 
+    # Step 1: Retrieve relevant chunks from vector store
+    results = vector_store.search(query, top_k=5)
+
+    if not results:
+        return {"answer": "No relevant documents found.", "sources": []}
+
+    # Convert any numpy.float32 values to Python float
+    for res in results:
+        res["page_number"] = int(res["page_number"])  # Ensure it's an int
+        res["distance"] = float(res["distance"])      # Ensure it's a float
+
+    # Step 2: Prepare context for the LLM
+    context = "\n".join([
+        f"Source: {res['filename']} (Page {res['page_number']})\n{res['text']}" 
+        for res in results
+    ])
+
+    full_prompt = f"{context}\nQuestion: {query}\nAnswer:"
+
+    # Step 3: Run LLM
     try:
-        # Generate embeddings for the query
-        embeddings = embedding_manager.generate_embeddings([query])
-        
-        # Ensure embeddings are NumPy arrays
-        if not isinstance(embeddings, np.ndarray):
-            embeddings = np.array(embeddings, dtype="float32")
-        
-        # Query the vector store
-        query_embedding = embeddings[0]
-        results = vector_store.query_embeddings(query_embedding, top_k=top_k)
-
-        # Convert results to a JSON serializable format
-        serializable_results = []
-        for result in results:
-            serializable_results.append({
-                "id": result["id"],
-                "content": result["content"],
-                "score": float(result["score"])
-            })
-        
-        return JSONResponse(
-            content={"query": query, "results": serializable_results},
-            status_code=200
+        process = subprocess.Popen(
+            ["ollama", "run", "llama3", full_prompt],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
         )
+        output, error = process.communicate()
 
+        if error:
+            return {"error": error.strip()}
+
+        return {"answer": output.strip(), "sources": results}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred while processing the query: {str(e)}")
+        return {"error": str(e)}
 
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+

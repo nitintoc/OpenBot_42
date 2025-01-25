@@ -72,15 +72,21 @@ async def answer_query(data: dict):
         return {"answer": "No relevant documents found.", "sources": []}
 
     # Convert any numpy.float32 values to Python float
-    for res in results:
-        res["page_number"] = int(res["page_number"])  # Ensure it's an int
-        res["distance"] = float(res["distance"])      # Ensure it's a float
+    #for res in results:
+    #    res["page_number"] = int(res["page_number"])  # Ensure it's an int
+    #    res["distance"] = float(res["distance"])      # Ensure it's a float
+
+    sources = "\n".join([
+        f"Source: {res['filename']} (Page {res['page_number']})" 
+        for res in results
+    ])
 
     # Step 2: Prepare context for the LLM
     context = "\n".join([
         f"Source: {res['filename']} (Page {res['page_number']})\n{res['text']}" 
         for res in results
     ])
+
 
     full_prompt = f"{context}\nQuestion: {query}\nAnswer:"
 
@@ -97,7 +103,7 @@ async def answer_query(data: dict):
         if error:
             return {"error": error.strip()}
 
-        return {"answer": output.strip(), "sources": results}
+        return {"answer": output.strip(), "sources": sources}
     except Exception as e:
         return {"error": str(e)}
 

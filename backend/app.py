@@ -1,9 +1,11 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from services.file_reader import FileReader
 from services.vector_store import VectorStore
 import logging
 from typing import List
 import subprocess
+import traceback
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -11,52 +13,71 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Vite's default port
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Initialize services
-file_reader = FileReader()
-vector_store = VectorStore()
-
-from services.file_reader import FileReader
-from services.vector_store import VectorStore
-
-app = FastAPI()
-logger = logging.getLogger(__name__)
-
-# Initialize the services
 file_reader = FileReader()
 vector_store = VectorStore()
 
 @app.post("/upload")
 async def upload_files(files: List[UploadFile] = File(...)):
     results = []
-
     allowed_types = {"application/pdf", "text/plain"}
+
+    if not files:
+        logger.error("No files were uploaded")
+        raise HTTPException(status_code=400, detail="No files were uploaded")
 
     for file in files:
         logger.info(f"Processing file: {file.filename} of type {file.content_type}")
 
         if file.content_type not in allowed_types:
-            logger.error(f"Unsupported file type: {file.filename}")
-            results.append({"filename": file.filename, "status": "error", "message": "Unsupported file type"})
+            logger.error(f"Unsupported file type: {file.filename} ({file.content_type})")
+            results.append({
+                "filename": file.filename, 
+                "status": "error", 
+                "message": f"Unsupported file type: {file.content_type}. Allowed types are: PDF and TXT"
+            })
             continue
 
         try:
             # Step 1: Read and chunk the file
-            text_chunks = file_reader.read_file(file)
+            text_chunks = await file_reader.read_file(file)
 
             if not text_chunks:
                 logger.warning(f"No text extracted from file: {file.filename}")
-                results.append({"filename": file.filename, "status": "warning", "message": "No text extracted"})
+                results.append({
+                    "filename": file.filename, 
+                    "status": "warning", 
+                    "message": "No text could be extracted from the file"
+                })
                 continue
 
             # Step 2: Store embeddings along with metadata
             store_result = vector_store.store_embeddings(text_chunks)
 
-            results.append({"filename": file.filename, "status": "success", "processed_chunks": store_result["processed_chunks"]})
+            results.append({
+                "filename": file.filename, 
+                "status": "success", 
+                "processed_chunks": store_result["processed_chunks"]
+            })
             logger.info(f"File processed successfully: {file.filename}")
 
         except Exception as e:
-            logger.error(f"Error processing file {file.filename}: {str(e)}")
-            results.append({"filename": file.filename, "status": "error", "message": str(e)})
+            error_msg = f"Error processing file {file.filename}: {str(e)}\n{traceback.format_exc()}"
+            logger.error(error_msg)
+            results.append({
+                "filename": file.filename, 
+                "status": "error", 
+                "message": f"Failed to process file: {str(e)}"
+            })
 
     return {"message": "Files processed", "results": results}
 
@@ -88,7 +109,7 @@ async def answer_query(data: dict):
     ])
 
 
-    full_prompt = f"{context}\nQuestion: {query}\nAnswer:"
+    full_prompt = f"Break down the following context into individual parts, analyse each part in complete detail and then answer the query by looking at the individual parts. Ensure that the answer is well detailed based on the breakdown of the context and the question {context}\nQuestion: {query}\nAnswer:"
 
     # Step 3: Run LLM
     try:

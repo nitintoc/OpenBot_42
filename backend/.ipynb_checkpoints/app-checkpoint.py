@@ -88,7 +88,7 @@ async def answer_query(data: dict):
     ])
 
 
-    full_prompt = f"{context}\nQuestion: {query}\nAnswer:"
+    full_prompt = f"Break down the following context into individual parts, analyse each part in complete detail and then answer the query by looking at the individual parts. Ensure that the answer is well detailed based on the breakdown of the context and the question {context}\nQuestion: {query}\nAnswer:"
 
     # Step 3: Run LLM
     try:

@@ -1,28 +1,57 @@
 # OpenBot_42
 
-Project Vision:
-Build a fully open source AI agent that is resource efficient and can be run locally to ensure complete data privacy and security.
+**OpenBot_42** is a fully open source AI agent focused on resource efficiency, local operation, and complete data privacy and security.
 
-Project Goals:
-1. Enable Retrieval Augmented Generation
-2. Enable referencing to sources
-3. Enable reasoning capabilities in the model
-4. Enable multi-modal capabilities and the ability to work with different types of data that include text files, pdf files, web url, etc
-5. Enable web search and abstract indexation
-6. Ensure plug and play use of open source models
-7. Make this open source API that other projects can use to build their own LLM agents
-8. Ensure robust, reliable and scalable code.
+## Vision
 
+Build an AI agent that is:
+- Resource efficient
+- Usable locally for maximum privacy and security
 
-Using API:
-Requirements:
-Python 3.10 and above
+## Project Goals
 
-1. clone the repo
-2. move to the folder where the repo is cloned (using terminal like powershell etc)
-3. pip install -r requirements.txt
-4. run the app using the command : python -m uvicorn app:app --reload --host 0.0.0.0 --port 8000 ( note that one can change the port based on the availability)
-5. The app would be running on  http://127.0.0.1:8000
-6. Either use curl request or the FastAPI swagger UI to use the api. In order to use the UI go to: http://127.0.0.1:8000/docs
+1. Support Retrieval Augmented Generation (RAG)
+2. Reference sources in responses
+3. Provide reasoning capabilities
+4. Enable multi-modal data handling (text, PDF, web URLs, etc.)
+5. Integrate web search and abstract indexation
+6. Allow plug-and-play use of open source models
+7. Expose an open API for building custom LLM agents
+8. Ensure robust, reliable, and scalable code
 
+---
 
+## Getting Started
+
+### Requirements
+
+- Python 3.10 or above
+
+### Installation & Usage
+
+1. **Clone the repository:**
+    ```bash
+    git clone https://github.com/nitintoc/OpenBot_42.git
+    cd OpenBot_42
+    ```
+
+2. **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3. **Run the application:**
+    ```bash
+    python -m uvicorn app:app --reload --host 0.0.0.0 --port 8000
+    ```
+    *(You may change the port if needed)*
+
+4. **Access the API:**
+    - The app will be available at: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+    - Use cURL or the FastAPI Swagger UI at: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+---
+
+## License
+
+This project is open source and available under the [appropriate license]. *(Replace with actual license if available.)*

@@ -54,4 +54,4 @@ Build an AI agent that is:
 
 ## License
 
-This project is open source and available under the [appropriate license]. *(Replace with actual license if available.)*
+This project is open source 
